@@ -112,6 +112,16 @@ describe('PlainTextUrlsToHyperlinksConverter', () => {
           urlText: 'https://privacy.sexy/privacy%2Fscripts',
           expectedLabel: 'privacy.sexy - Privacy/scripts',
         },
+        {
+          description: 'keeps malformed percent-encoding as text in labels',
+          urlText: 'https://privacy.sexy/100%-private',
+          expectedLabel: 'privacy.sexy - 100% Private',
+        },
+        {
+          description: 'decodes valid path segments next to a malformed one',
+          urlText: 'https://privacy.sexy/privacy%20scripts/50%',
+          expectedLabel: 'privacy.sexy - Privacy Scripts',
+        },
       ];
       testScenarios.forEach(({
         description, urlText, expectedLabel,

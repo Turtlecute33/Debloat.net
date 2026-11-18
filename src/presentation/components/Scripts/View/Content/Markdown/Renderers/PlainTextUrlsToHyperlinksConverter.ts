@@ -66,10 +66,10 @@ function isNumeric(value: string): boolean {
 }
 
 function makePathReadable(path: string): string | undefined {
-  const decodedPath = decodeURI(path); // Decode URI components, e.g., '%20' to space
+  const decodedPath = decodeOrKeep(path, decodeURI); // Decode URI components, e.g., '%20' to space
   const pathParts = decodedPath.split('/');
   const decodedPathParts = pathParts // Split then decode to correctly handle '%2F' as '/'
-    .map((pathPart) => decodeURIComponent(pathPart));
+    .map((pathPart) => decodeOrKeep(pathPart, decodeURIComponent));
   const descriptivePart = findMostDescriptiveName(decodedPathParts);
   if (!descriptivePart) {
     return undefined;
@@ -77,6 +77,14 @@ function makePathReadable(path: string): string | undefined {
   const withoutExtension = removeFileExtension(descriptivePart);
   const tokenizedText = tokenizeTextForReadability(withoutExtension);
   return tokenizedText;
+}
+
+function decodeOrKeep(text: string, decode: (encodedText: string) => string): string {
+  try {
+    return decode(text);
+  } catch {
+    return text; // Malformed percent-encoding, e.g. a bare '%', throws `URIError`
+  }
 }
 
 function tokenizeTextForReadability(text: string): string {
