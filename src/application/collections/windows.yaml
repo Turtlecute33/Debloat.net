@@ -3117,6 +3117,10 @@ actions:
                     > the upstream project's complete lab validation [3]. On hosts using Hyper-V's Default Switch, WSL2,
                     > Windows Sandbox, Internet Connection Sharing, or similar host-side NAT, the firewall block can also
                     > interrupt connectivity for guests or shared clients; reverting the script removes that block [5].
+                    > Windows Update may also stop offering feature updates: these scripts block `login.live.com` and the
+                    > network traffic of the Microsoft Account Sign-in Assistant (`wlidsvc`), and Microsoft documents that
+                    > Windows Update no longer offers feature updates when Windows cannot reach the Microsoft account
+                    > authentication service [6].
 
                     No local operation can erase records Microsoft already holds or guarantee that every unknown copy or
                     unrelated identifier has been removed [3] [4].
@@ -3126,6 +3130,7 @@ actions:
                     [3]: https://github.com/yegors/deGDID/blob/068263f4fd9f1e6632c78c365b1a98027f6c2912/README.md "deGDID documentation | GitHub"
                     [4]: https://github.com/yegors/deGDID/blob/068263f4fd9f1e6632c78c365b1a98027f6c2912/docs/countermeasures.md "deGDID countermeasures and limitations | GitHub"
                     [5]: https://github.com/yegors/deGDID/issues/3 "Protect mode blocks Windows host-side NAT sharing | GitHub"
+                    [6]: https://web.archive.org/web/20230911110911/https://learn.microsoft.com/en-us/windows/privacy/manage-connections-from-windows-operating-system-components-to-microsoft-services#12-microsoft-account "Manage connections from Windows 10 and Windows 11 Server/Enterprise editions operating system components to Microsoft services - Windows Privacy | Microsoft Learn"
                 children:
                     -
                         name: Block creation of Windows Global Device ID (breaks Microsoft account features)
@@ -3493,7 +3498,8 @@ actions:
                                 docs: |- # refactor-with-variable: Similar template to other file access restriction scripts
                                     This script prevents Windows apps from accessing the Documents folder [1] [2].
                                     It restricts app access to document files without user consent [1].
-                                    After running this script, apps can still access the files when explicitly permitted [1].
+                                    After running this script, apps can still open files that you pick in a file picker [3]. Access to the whole
+                                    folder comes back only when the device-wide setting for this folder is turned back on.
                                     This script enhances your privacy and security by preventing unauthorized app access.
 
                                     This script configures:
@@ -3505,6 +3511,7 @@ actions:
 
                                     [1]: https://web.archive.org/web/20240427120219/https://learn.microsoft.com/en-us/windows/uwp/packaging/app-capability-declarations "App capability declarations - UWP applications | Microsoft Learn | learn.microsoft.com"
                                     [2]: https://web.archive.org/web/20240427114500/https://www.joseespitia.com/2019/07/24/registry-keys-for-windows-10-application-privacy-settings/ "Registry Keys for Windows 10 Application Privacy Settings - Jose Espitia | joseespitia.com"
+                                    [3]: https://web.archive.org/web/20261016120727/https://learn.microsoft.com/en-us/windows/apps/develop/files/file-access-permissions#accessing-additional-locations "File access permissions - Windows apps | Microsoft Learn | learn.microsoft.com"
                                 call:
                                     function: BlockUWPAccessViaConsentStore
                                     parameters:
@@ -3515,7 +3522,8 @@ actions:
                                 docs: |- # refactor-with-variable: Similar template to other file access restriction scripts
                                     This script prevents Windows apps from accessing the Pictures folder [1] [2].
                                     It restricts app access to photos and images without user consent [1].
-                                    After running this script, apps can still access the files when explicitly permitted [1].
+                                    After running this script, apps can still open files that you pick in a file picker [3]. Access to the whole
+                                    folder comes back only when the device-wide setting for this folder is turned back on.
                                     This script enhances your privacy and security by preventing unauthorized app access.
 
                                     This script configures:
@@ -3528,6 +3536,7 @@ actions:
 
                                     [1]: https://web.archive.org/web/20240427120219/https://learn.microsoft.com/en-us/windows/uwp/packaging/app-capability-declarations "App capability declarations - UWP applications | Microsoft Learn | learn.microsoft.com"
                                     [2]: https://web.archive.org/web/20240427114500/https://www.joseespitia.com/2019/07/24/registry-keys-for-windows-10-application-privacy-settings/ "Registry Keys for Windows 10 Application Privacy Settings - Jose Espitia | joseespitia.com"
+                                    [3]: https://web.archive.org/web/20261016120727/https://learn.microsoft.com/en-us/windows/apps/develop/files/file-access-permissions#accessing-additional-locations "File access permissions - Windows apps | Microsoft Learn | learn.microsoft.com"
                                 call:
                                     function: BlockUWPAccessViaConsentStore
                                     parameters:
@@ -3538,7 +3547,8 @@ actions:
                                 docs: |- # refactor-with-variable: Similar template to other file access restriction scripts
                                     This script prevents Windows apps from accessing the Videos folder [1] [2].
                                     It restricts app access to video files without user consent [1].
-                                    After running this script, apps can still access the files when explicitly permitted [1].
+                                    After running this script, apps can still open files that you pick in a file picker [3]. Access to the whole
+                                    folder comes back only when the device-wide setting for this folder is turned back on.
                                     This script enhances your privacy and security by preventing unauthorized app access.
 
                                     This script configures:
@@ -3551,6 +3561,7 @@ actions:
 
                                     [1]: https://web.archive.org/web/20240427120219/https://learn.microsoft.com/en-us/windows/uwp/packaging/app-capability-declarations "App capability declarations - UWP applications | Microsoft Learn | learn.microsoft.com"
                                     [2]: https://web.archive.org/web/20240427114500/https://www.joseespitia.com/2019/07/24/registry-keys-for-windows-10-application-privacy-settings/ "Registry Keys for Windows 10 Application Privacy Settings - Jose Espitia | joseespitia.com"
+                                    [3]: https://web.archive.org/web/20261016120727/https://learn.microsoft.com/en-us/windows/apps/develop/files/file-access-permissions#accessing-additional-locations "File access permissions - Windows apps | Microsoft Learn | learn.microsoft.com"
                                 call:
                                     function: BlockUWPAccessViaConsentStore
                                     parameters:
@@ -3561,7 +3572,8 @@ actions:
                                 docs: |- # refactor-with-variable: Similar template to other file access restriction scripts
                                     This script prevents Windows apps from accessing the Music folder [1].
                                     It restricts app access to audio files without user consent [1].
-                                    After running this script, apps can still access the files when explicitly permitted [1].
+                                    After running this script, apps can still open files that you pick in a file picker [2]. Access to the whole
+                                    folder comes back only when the device-wide setting for this folder is turned back on.
                                     This script enhances your privacy and security by preventing unauthorized app access.
 
                                     This script configures:
@@ -3572,6 +3584,7 @@ actions:
                                     > Disabling app access may affect the functionality of certain Microsoft Store, third-party, and system applications.
 
                                     [1]: https://web.archive.org/web/20240427120219/https://learn.microsoft.com/en-us/windows/uwp/packaging/app-capability-declarations "App capability declarations - UWP applications | Microsoft Learn | learn.microsoft.com"
+                                    [2]: https://web.archive.org/web/20261016120727/https://learn.microsoft.com/en-us/windows/apps/develop/files/file-access-permissions#accessing-additional-locations "File access permissions - Windows apps | Microsoft Learn | learn.microsoft.com"
                                 call:
                                     function: BlockUWPAccessViaConsentStore
                                     parameters:
@@ -3582,7 +3595,8 @@ actions:
                                 docs: |- # refactor-with-variable: Same • App Access Caution • Template as other file access restriction scripts
                                     This script restricts app access to the broader file system [1] [2].
                                     It restricts app access to files that the user has access to without user consent [2].
-                                    After running this script, apps can still access the files when explicitly permitted [1].
+                                    After running this script, apps can still open files that you pick in a file picker [3]. Access to all your
+                                    files comes back only when the device-wide file system setting is turned back on.
                                     This script enhances your privacy and security by preventing unauthorized app access.
 
                                     This script configures:
@@ -3594,6 +3608,7 @@ actions:
 
                                     [1]: https://web.archive.org/web/20240427120219/https://learn.microsoft.com/en-us/windows/uwp/packaging/app-capability-declarations "App capability declarations - UWP applications | Microsoft Learn | learn.microsoft.com"
                                     [2]: https://web.archive.org/web/20240427114500/https://www.joseespitia.com/2019/07/24/registry-keys-for-windows-10-application-privacy-settings/ "Registry Keys for Windows 10 Application Privacy Settings - Jose Espitia | joseespitia.com"
+                                    [3]: https://web.archive.org/web/20261016120727/https://learn.microsoft.com/en-us/windows/apps/develop/files/file-access-permissions#accessing-additional-locations "File access permissions - Windows apps | Microsoft Learn | learn.microsoft.com"
                                 call:
                                     function: BlockUWPAccessViaConsentStore
                                     parameters:
@@ -10925,6 +10940,8 @@ actions:
                                                 source information [4].
                                                 Disabling the Hubs Sidebar is the recommended method to also disable Copilot in Edge [4] [8].
                                                 Disabling it stops this data collection, improving your privacy.
+                                                On Edge 141 and later, Microsoft documents the `Microsoft365CopilotChatIconEnabled` policy as the only way
+                                                to control the Copilot button in the toolbar [12], so that button can still show after this script runs.
                                             - **Sidebar apps**:
                                                 Disabling the Hubs Sidebar also deactivates all sidebar apps [5].
                                                 This script disables also the sidebar in Progressive Web Apps (PWAs) [5].
@@ -10958,6 +10975,7 @@ actions:
                                             [9]: https://web.archive.org/web/20240517212443/https://learn.microsoft.com/en-us/deployedge/microsoft-edge-policies#standalonehubssidebarenabled "Microsoft Edge Browser Policy Documentation | Microsoft Learn | learn.microsoft.com"
                                             [10]: https://web.archive.org/web/20240519104546/https://answers.microsoft.com/en-us/microsoftedge/forum/all/microsoft-edge-running-in-the-background/b827d6dc-8853-4258-a2e1-a760e93df561 "Microsoft Edge running in the background - Microsoft Community | answers.microsoft.com"
                                             [11]: https://web.archive.org/web/20240122064120/https://learn.microsoft.com/en-us/windows/client-management/manage-windows-copilot "Manage Copilot in Windows - Windows Client Management | Microsoft Learn | learn.microsoft.com"
+                                            [12]: https://web.archive.org/web/20260723015759/https://learn.microsoft.com/en-us/deployedge/microsoft-edge-policies/HubsSidebarEnabled "Microsoft Edge Browser Policy Documentation HubsSidebarEnabled | Microsoft Learn | learn.microsoft.com"
                                         call:
                                             -
                                                 function: SetEdgePolicyViaRegistry
@@ -12728,7 +12746,7 @@ actions:
                     This category includes scripts designed to disable Adobe's background automatic update services and tasks.
                     These automatic updates run in the background [1], typically starting up with your PC, and work to keep your Adobe software up to date [1].
                     By disabling them, you optimize your system's performance and reduce unwanted data collection, but security fixes no longer install automatically.
-                    These scripts only disable automatic updates; manual updates are still possible.
+                    Manual updates may fail while these services and tasks are disabled. To update manually, revert these scripts first.
 
                     [1]: https://web.archive.org/web/20230624030406/https://helpx.adobe.com/x-productkb/global/adobe-background-processes.html "Why do I need the Adobe background processes? | helpx.adobe.com"
                 children:
@@ -13551,9 +13569,6 @@ actions:
                                                 - `TLS_RSA_EXPORT_WITH_RC2_CBC_40_MD5` [1] [4]
                                             - `RC2 56/128` [2] [4] [5] [6] (56-bit RC2 [4])
                                             - Enabled by default [4].
-                                            - Disabling it disallows the following cipher suites:
-                                                - `SSL_RSA_WITH_DES_CBC_SHA` [2]
-                                                - `TLS_RSA_WITH_DES_CBC_SHA` [2]
                                             - `RC2 128/128` [3] [4] [6] (128-bit RC2 [4])
                                             - Enabled by default [4].
 
@@ -16706,6 +16721,8 @@ actions:
                     > **Caution**:
                     > Blocking these hosts may reduce functionality, affecting not only Cortana and Live Tiles but also voice
                     > commands and voice-activated apps [2].
+                    > `th.bing.com` and `tse1.mm.bing.net` also serve the image thumbnails of Bing search results, so images in
+                    > Bing results may not load.
 
                     ### Blocked Hosts
 
@@ -25195,7 +25212,8 @@ actions:
                                             `HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WTDS\FeatureFlags!TelemetryCallsEnabled` [2] [3].
                                             
                                             This feature is unavailable on Windows 10 and Windows 11 21H2 [1].
-                                            It is enabled by default on Windows 11 Pro (version 23H2 and later versions) [3].
+                                            Windows 11 ships this value as `0` [3], so on a default installation this script changes nothing.
+                                            Its revert also writes `0`, which is the shipped default.
 
                                             [1]: https://web.archive.org/web/20240720170645/https://learn.microsoft.com/en-us/windows/security/operating-system-security/virus-and-threat-protection/microsoft-defender-smartscreen/enhanced-phishing-protection?tabs=intune "Enhanced Phishing Protection in Microsoft Defender SmartScreen - Windows Security | Microsoft Learn | learn.microsoft.com"
                                             [2]: https://github.com/privacysexy-forks/10_0_22622_601/blob/c598035e1a6627384d646140fe9e4d234b36b11d/C/Windows/System32/ThreatAssessment.dll.strings#L14142 "10_0_22622_601/C/Windows/System32/ThreatAssessment.dll.strings at c598035e1a6627384d646140fe9e4d234b36b11d · privacysexy-forks/10_0_22622_601 | github.com"
@@ -28108,8 +28126,9 @@ actions:
 
                                     > **Caution**:
                                     > Disabling this applet removes a user-friendly interface for configuring the firewall.
-                                    > Users can still manage firewall settings through other means, such as PowerShell or
-                                    > the **Windows Security** app.
+                                    > In the **Windows Security** app, the on/off switch of each network profile still works, but the
+                                    > **Allow an app through firewall** and **Restore firewalls to default** links open this applet, so
+                                    > they stop working. PowerShell and `netsh advfirewall` can still change firewall settings and rules.
 
                                     ### Technical Details
 
@@ -36989,6 +37008,10 @@ actions:
                                     > Removing these associations will prompt you to choose a default application
                                     > the next time you open files or URL protocols previously associated with Edge.
                                     > Remember to set up an alternative browser.
+                                    >
+                                    > Reverting this script does not make Edge the default for web links such as `http` and `https`, or for
+                                    > `.pdf` files, again, because Windows protects these defaults [2]. To get Edge back, choose it as the
+                                    > default browser in **Settings**.
 
                                     ### Technical Details
 
@@ -37052,6 +37075,7 @@ actions:
                                     ````
 
                                     [1]: https://web.archive.org/web/20240803173827/https://github.com/undergroundwires/privacy.sexy/issues/64 "[BUG]: can't sign in again · Issue #64 · undergroundwires/privacy.sexy"
+                                    [2]: https://web.archive.org/web/20240808100346/https://bugzilla.mozilla.org/show_bug.cgi?id=1852412 "1852412 - [win11] setAsDefaultUserChoice fails on some devices | bugzilla.mozilla.org"
                                 call:
                                     -
                                         function: RemoveUserURLAssociation
@@ -37188,7 +37212,7 @@ actions:
                                     -
                                         function: RemoveUserURLAssociation
                                         parameters:
-                                            # Check default: reg query "HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FileExts\.mhtml\UserChoice"
+                                            # Check default: reg query "HKCU\SOFTWARE\Microsoft\Windows\Shell\Associations\UrlAssociations\ftp\UserChoice"
                                             # Availability: ❌ Windows 10 Pro (≤ 22H2) | ✅ Windows 11 Pro (≥ 21H2)
                                             urlProtocol: ftp
                                             progId: MSEdgeHTM
