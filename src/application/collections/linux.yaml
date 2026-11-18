@@ -2368,14 +2368,19 @@ actions:
                 echo 'Skipping, the installed MOTD News hook does not use /etc/default/motd-news.'
               elif [ -L "$motd_config" ]; then
                 >&2 echo 'Skipping, /etc/default/motd-news is a symbolic link and will not be replaced.'
-              elif [ -e "$motd_state_archive" ]; then
-                echo "Original MOTD News state is already recorded at \"$motd_state_archive\"."
               else
-                sudo install --directory --mode=700 "$motd_state_dir"
-                if [ -e "$motd_config" ]; then # Preserve the original file.
-                  sudo tar --create --file="$motd_state_archive" --acls --xattrs --numeric-owner --absolute-names "$motd_config"
+                # Recording and applying are separate, so a re-run applies the setting again.
+                recorded_now='no'
+                if [ -e "$motd_state_archive" ]; then
+                  echo "Original MOTD News state is already recorded at \"$motd_state_archive\"."
                 else
-                  sudo tar --create --file="$motd_state_archive" --files-from=/dev/null
+                  sudo install --directory --mode=700 "$motd_state_dir"
+                  if [ -e "$motd_config" ]; then # Preserve the original file.
+                    sudo tar --create --file="$motd_state_archive" --acls --xattrs --numeric-owner --absolute-names "$motd_config"
+                  else
+                    sudo tar --create --file="$motd_state_archive" --files-from=/dev/null
+                  fi
+                  recorded_now='yes'
                 fi
                 temporary_file="$(mktemp)"
                 if [ -e "$motd_config" ]; then # Seed the edited copy.
@@ -2389,6 +2394,9 @@ actions:
                 if sudo install --owner=root --group=root --mode=644 "$temporary_file" "$motd_config"; then
                   echo 'Disabled Ubuntu MOTD News requests.'
                 else
+                  if [ "$recorded_now" = 'yes' ]; then
+                    sudo rm --force "$motd_state_archive"
+                  fi
                   >&2 echo 'Failed to update the MOTD News configuration.'
                 fi
                 rm --force "$temporary_file"
@@ -2834,17 +2842,26 @@ actions:
               sudo install --directory --mode=700 "$wifi_mac_state_dir"
               if [ -L "$wifi_mac_file" ]; then
                 >&2 echo "Skipping, \"$wifi_mac_file\" is a symbolic link and will not be replaced."
-              elif [ -e "$wifi_mac_state" ]; then
-                echo "Original NetworkManager state is already recorded at \"$wifi_mac_state\"."
               else
-                if [ -e "$wifi_mac_file" ]; then
-                  sudo tar --create --file="$wifi_mac_state" --acls --xattrs --numeric-owner --absolute-names "$wifi_mac_file"
+                # Recording and applying are separate, so a re-run applies the setting again.
+                recorded_now='no'
+                if [ -e "$wifi_mac_state" ]; then
+                  echo "Original NetworkManager state is already recorded at \"$wifi_mac_state\"."
                 else
-                  sudo tar --create --file="$wifi_mac_state" --files-from=/dev/null
+                  if [ -e "$wifi_mac_file" ]; then
+                    sudo tar --create --file="$wifi_mac_state" --acls --xattrs --numeric-owner --absolute-names "$wifi_mac_file"
+                  else
+                    sudo tar --create --file="$wifi_mac_state" --files-from=/dev/null
+                  fi
+                  recorded_now='yes'
                 fi
-                printf '%s\n' "$wifi_mac_content" | sudo tee "$wifi_mac_file" > /dev/null
-                sudo chmod 644 "$wifi_mac_file"
-                if sudo nmcli general reload; then
+                if ! printf '%s\n' "$wifi_mac_content" | sudo tee "$wifi_mac_file" > /dev/null \
+                    || ! sudo chmod 644 "$wifi_mac_file"; then
+                  if [ "$recorded_now" = 'yes' ]; then
+                    sudo rm --force "$wifi_mac_state"
+                  fi
+                  >&2 echo "Failed to write \"$wifi_mac_file\"."
+                elif sudo nmcli general reload; then
                   echo 'Configured stable, per-network Wi-Fi MAC addresses.'
                 else
                   >&2 echo 'Saved the configuration, but NetworkManager could not reload it; it applies after restart.'
