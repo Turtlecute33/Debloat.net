@@ -8,6 +8,108 @@ milestones; `git log` remains the complete history of changes.
 Release history up to and including `0.13.8`, the point this project forked, belongs to upstream and is
 kept there: <https://github.com/undergroundwires/privacy.sexy/blob/master/CHANGELOG.md>.
 
+## 0.18.3 (2026-11-18)
+
+A security and accuracy review of the site and of every script. An outside review listed 269
+possible problems. Each one was checked against the code: about two thirds were real, almost all of
+them minor, and the fixes are below. The changed scripts were applied twice and reverted twice on
+GitHub's Windows, macOS and Linux runners.
+
+The site:
+
+- Script names and docs can no longer contain working HTML. Only the small reference numbers stay
+  HTML; any other tag shows as plain text. None of the current scripts used HTML, so nothing looks
+  different.
+- The analytics script is pinned to a hash. If the file on the analytics server changes, the browser
+  does not run it.
+- The run steps no longer say that the scripts are "verified to be safe". The "Standard" preset no
+  longer promises that every app keeps working, because some of its scripts note side effects.
+  SECURITY.md no longer says that the Content Security Policy stops cross-site scripting. The macOS
+  steps no longer suggest double-clicking the `.sh` file, which usually opens it in a text editor.
+- Keyboard and screen reader use: the run instructions dialog takes the focus and keeps it until it
+  closes, and it has a name. The info icons in the run steps can be reached with Tab. Each "Revert"
+  switch is named after its script, and the copy and close buttons have names.
+- A broken link in a script's docs no longer stops the docs from showing.
+
+Windows:
+
+- Reverting "Disable firewall via command-line utility" now turns the firewall back on. Before, it
+  left the firewall off when the firewall service was not running yet, which is the usual case right
+  after the service scripts are reverted.
+- Folder cleanups refuse an empty path. If `%TEMP%` was not defined, "Clear temporary user folder"
+  would have cleared the root of the drive.
+- "Clear Opera history (user profiles, settings, and data)" now also clears current Opera. It only
+  knew the folders of the Opera versions from before 2013.
+- The Visual Studio Code scripts now also work on a fresh installation that has no `settings.json`
+  yet.
+- "Clear event logs in Event Viewer application" no longer fails for every log when the script is
+  started with an argument.
+- Reverting a script for a service that does not exist on the computer no longer reports a failure.
+  This affects the Visual Studio, NVIDIA and Defender DLP services and the Edge update services.
+- "Disable Update Compliance processing of diagnostics data" and "Disable commercial usage of
+  collected data" leave "Standard". Microsoft deprecated both policies, and they only work on
+  Windows 10 version 1809.
+- Many docs said something the script or Windows does not do, and are corrected. Some examples:
+  - Disabling Adobe updates was said to reduce exposure to vulnerabilities, but it leaves them
+    unpatched.
+  - Manual updates do not always work while an update service is disabled.
+  - "Maximize update pause duration" pauses updates until 17 January 2963.
+  - On Home and Pro, Windows still sends required diagnostic data.
+  - Some of the Exploit Guard protections are off by default.
+- Two scripts are renamed for what they do: "Disable hibernation to avoid sensitive data storage"
+  (it also turns off Fast Startup, so startup is slower, not faster) and "Disable Visual Studio Code
+  automatic extension update checks".
+
+macOS:
+
+- "Clear Firefox passwords" also deletes `logins-backup.json`. Firefox restored the passwords from
+  that file.
+- "Disable incoming SSH and SFTP remote logins" (Standard) now checks that Remote Login is really
+  off. macOS refuses the change when the terminal app has no Full Disk Access, and the script now
+  says so and does not report success.
+- Run from a root shell with Homebrew bash, the cleanups acted on root's home folder instead of
+  yours. The script now starts again once, so `~` is your home folder.
+- The script ends with exit code 0 when it runs without a terminal, for example from a management
+  tool.
+- Reverting "Disable the insecure TFTP service" no longer turns TFTP on. macOS ships it off.
+- "Clear iOS simulators" now clears your simulators. It ran as root and cleared root's empty set.
+- The Safari cache and iOS backup cleanups show the error when Full Disk Access is missing, instead
+  of doing nothing and reporting success.
+- "Clear "All" permissions" now warns that it also removes Full Disk Access, Accessibility and
+  Screen Recording permissions.
+
+Linux:
+
+- "Clear system logs" no longer deletes the journal files that journald has open. Before, journald
+  wrote new messages into the deleted files, and you could not read them until it restarted. It
+  now uses `journalctl --rotate` and then vacuums the old files.
+- The script stops at once when `sudo` is not installed, also when it runs as root. Before, about
+  170 commands failed one by one, and the script still reported that it had hardened the system.
+- Cleanups in your home folder now delete files as you, not as root. A folder that was replaced
+  with a link to a system folder could make root delete files outside your home folder.
+- The Azure CLI cleanups run `az` as you. As root, `az` left files in `~/.azure` that your own
+  `az` could not change.
+- The Visual Studio Code scripts also work on a fresh installation that has no `settings.json` yet.
+- "Disable Ubuntu MOTD News requests" and "Use a stable Wi-Fi MAC address per network" apply again
+  when you run them again. Before, they stopped once the state of the first run was recorded.
+- Reverting a kernel setting no longer lowers a value that was made stricter after the script ran.
+  Reverting a GNOME setting keeps the recorded state if the old value could not be set back.
+- Three scripts that did nothing are removed: "Disable crash report submissions", because whoopsie
+  has not read that setting for years, and two Visual Studio Code sync scripts: Visual Studio Code
+  does not read their `["*"]` value as "everything", so it ignored nothing.
+- Browser cleanups also delete the files that SQLite keeps next to a database, which can hold the
+  newest entries. The crash report cleanup also clears Apport's core dumps. This also applies to
+  Firefox on Windows and macOS.
+- Docs: GNOME ships both of its privacy report settings turned off. "Clear LibreOffice usage
+  history" resets every LibreOffice setting. Reverting the Ubuntu Report opt-out sends a report
+  at once. "Empty trash" does not empty the trash folders on other drives. The WebRTC docs now say
+  what the preference does.
+
+All systems:
+
+- The site refuses a script name that contains a line break. The second line would have run as a
+  command.
+
 ## 0.18.2 (2026-11-11)
 
 One fix, found by running the "Strict" preset of 0.18.1 on an Italian Windows 11 Pro (x64): 295
