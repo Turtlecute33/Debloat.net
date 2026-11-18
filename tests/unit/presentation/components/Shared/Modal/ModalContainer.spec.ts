@@ -127,6 +127,18 @@ describe('ModalContainer.vue', () => {
     expect(slotText).to.equal(expectedText);
   });
 
+  it('passes `ariaLabel` to the modal content', () => {
+    // arrange
+    const expectedLabel = 'How to run the script';
+
+    // act
+    const wrapper = mountComponent({ modelValue: true, ariaLabel: expectedLabel });
+
+    // assert
+    const contentMock = wrapper.findComponent({ name: COMPONENT_MODAL_CONTENT_NAME });
+    expect(contentMock.props('ariaLabel')).to.equal(expectedLabel);
+  });
+
   describe('closeOnOutsideClick', () => {
     it('does not close on overlay click if prop is false', async () => {
       // arrange
@@ -159,6 +171,7 @@ describe('ModalContainer.vue', () => {
 function mountComponent(options: {
   readonly modelValue: boolean,
   readonly closeOnOutsideClick?: boolean,
+  readonly ariaLabel?: string,
   readonly slotHtml?: string,
   readonly escapeListener?: typeof useEscapeKeyListener,
 }) {
@@ -168,6 +181,7 @@ function mountComponent(options: {
       ...(options.closeOnOutsideClick !== undefined ? {
         closeOnOutsideClick: options.closeOnOutsideClick,
       } : {}),
+      ...(options.ariaLabel !== undefined ? { ariaLabel: options.ariaLabel } : {}),
     },
     slots: options.slotHtml !== undefined ? { default: options.slotHtml } : undefined,
     global: {
@@ -183,6 +197,7 @@ function mountComponent(options: {
         [COMPONENT_MODAL_CONTENT_NAME]: {
           name: COMPONENT_MODAL_CONTENT_NAME,
           template: '<div><slot /></div>',
+          props: ['ariaLabel'],
         },
       },
     },

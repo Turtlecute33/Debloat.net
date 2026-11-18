@@ -10,6 +10,7 @@
     />
     <ModalContent
       :show="isOpen"
+      :aria-label="ariaLabel"
       @transitioned-out="onContentTransitionedOut"
     >
       <slot />
@@ -44,6 +45,10 @@ export default defineComponent({
     closeOnOutsideClick: {
       type: Boolean,
       default: true,
+    },
+    ariaLabel: {
+      type: String,
+      default: undefined,
     },
   },
   emits: {

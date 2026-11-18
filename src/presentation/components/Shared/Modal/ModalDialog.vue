@@ -1,6 +1,7 @@
 <template>
   <ModalContainer
     v-model="showDialog"
+    :aria-label="ariaLabel"
   >
     <div class="dialog">
       <div class="dialog__content">
@@ -30,6 +31,10 @@ export default defineComponent({
     modelValue: {
       type: Boolean,
       required: true,
+    },
+    ariaLabel: {
+      type: String,
+      default: undefined,
     },
   },
   emits: {

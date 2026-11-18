@@ -6,7 +6,10 @@
       primary
       @click="saveCode"
     />
-    <ModalDialog v-model="areInstructionsVisible">
+    <ModalDialog
+      v-model="areInstructionsVisible"
+      aria-label="How to run the script"
+    >
       <BrowserRunInstructions :filename="filename" />
     </ModalDialog>
   </div>

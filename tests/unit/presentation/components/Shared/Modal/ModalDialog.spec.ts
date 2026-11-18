@@ -35,6 +35,18 @@ describe('ModalDialog.vue', () => {
     });
   });
 
+  it(`passes \`ariaLabel\` to ${MODAL_CONTAINER_COMPONENT_NAME}`, () => {
+    // arrange
+    const expectedLabel = 'How to run the script';
+
+    // act
+    const wrapper = mountComponent({ ariaLabel: expectedLabel });
+
+    // assert
+    const modalContainerWrapper = wrapper.findComponent({ name: MODAL_CONTAINER_COMPONENT_NAME });
+    expect(modalContainerWrapper.props('ariaLabel')).to.equal(expectedLabel);
+  });
+
   describe('close button', () => {
     it('renders the close button', async () => {
       // arrange
@@ -64,6 +76,7 @@ describe('ModalDialog.vue', () => {
 
 function mountComponent(options?: {
   readonly modelValue?: boolean,
+  readonly ariaLabel?: string,
   readonly slotHtml?: string,
 }) {
   const wrapper = shallowMount(ModalDialog, {
@@ -71,6 +84,7 @@ function mountComponent(options?: {
       modelValue: options?.modelValue !== undefined
         ? options?.modelValue
         : true /* provide default value to required property */,
+      ...(options?.ariaLabel !== undefined ? { ariaLabel: options?.ariaLabel } : {}),
     },
     slots: options?.slotHtml !== undefined ? { default: options?.slotHtml } : undefined,
     global: {
@@ -78,7 +92,7 @@ function mountComponent(options?: {
         [MODAL_CONTAINER_COMPONENT_NAME]: {
           name: MODAL_CONTAINER_COMPONENT_NAME,
           template: '<slot />',
-          props: ['modelValue'],
+          props: ['modelValue', 'ariaLabel'],
         },
       },
     },

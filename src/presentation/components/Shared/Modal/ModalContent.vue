@@ -13,6 +13,9 @@
         role="dialog"
         aria-expanded="true"
         aria-modal="true"
+        :aria-label="ariaLabel"
+        tabindex="-1"
+        @keydown="keepTabFocusInside"
       >
         <!--
           Scrolls inside the sheet rather than the sheet itself scrolling: the sheet's glass is
@@ -28,13 +31,26 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, shallowRef } from 'vue';
+import { defineComponent, shallowRef, watch } from 'vue';
+
+const FOCUSABLE_ELEMENTS_SELECTOR = [
+  'a[href]',
+  'button:not([disabled])',
+  'input:not([disabled])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  '[tabindex]:not([tabindex="-1"])',
+].join(',');
 
 export default defineComponent({
   props: {
     show: {
       type: Boolean,
       default: false,
+    },
+    ariaLabel: {
+      type: String,
+      default: undefined,
     },
   },
   emits: [
@@ -43,12 +59,43 @@ export default defineComponent({
   setup(_, { emit }) {
     const modalElement = shallowRef<HTMLElement | undefined>();
 
+    /*
+      Moves focus into the dialog when it opens, so keyboard and screen reader users start in it.
+      It focuses the dialog itself, not its first control: in the run instructions that control
+      is a tooltip trigger, and focus would open its tooltip. `ModalContainer` gives the focus
+      back to the opener when the dialog closes.
+    */
+    watch(modalElement, (element) => element?.focus({ preventScroll: true }), { flush: 'post' });
+
+    function keepTabFocusInside(event: KeyboardEvent) {
+      const dialog = modalElement.value;
+      if (event.key !== 'Tab' || !dialog) {
+        return;
+      }
+      const focusableElements = dialog.querySelectorAll<HTMLElement>(FOCUSABLE_ELEMENTS_SELECTOR);
+      if (focusableElements.length === 0) {
+        event.preventDefault();
+        return;
+      }
+      const first = focusableElements[0];
+      const last = focusableElements[focusableElements.length - 1];
+      const focused = document.activeElement;
+      if (event.shiftKey && (focused === first || focused === dialog)) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && focused === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    }
+
     function onAfterTransitionLeave() {
       emit('transitionedOut');
     }
 
     return {
       onAfterTransitionLeave,
+      keepTabFocusInside,
       modalElement,
     };
   },
@@ -113,6 +160,10 @@ $modal-content-offset-upward: $spacing-absolute-large;
   flex-direction: column;
 
   color: var(--text);
+
+  &:focus-visible {
+    outline: none; // Takes focus only as the start point when it opens, it is not a control.
+  }
 }
 
 .modal-content-scroller {
