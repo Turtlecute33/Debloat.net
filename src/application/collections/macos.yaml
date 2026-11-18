@@ -973,6 +973,7 @@ actions:
                                     rm -fv ~/Library/Application\ Support/Firefox/Profiles/*/signons3.txt
                                     rm -fv ~/Library/Application\ Support/Firefox/Profiles/*/signons.sqlite
                                     rm -fv ~/Library/Application\ Support/Firefox/Profiles/*/logins.json
+                                    rm -fv ~/Library/Application\ Support/Firefox/Profiles/*/logins-backup.json
                             -
                                 name: Clear Firefox HTML5 cookies
                                 code: rm -fv ~/Library/Application\ Support/Firefox/Profiles/*/webappsstore.sqlite
