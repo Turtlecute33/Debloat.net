@@ -437,6 +437,9 @@ actions:
               It is found inside the user settings directory (`~/.config/libreoffice/4/user`) [2].
               It includes thumbnails generated [3], and a recent document list [4].
 
+              > **Caution:** Deleting this file also resets every LibreOffice setting you changed, not only the usage history.
+              > It cannot be undone. Close LibreOffice before you run this script.
+
               See also: [LibreOffice Homepage](https://web.archive.org/web/20221029214216/https://www.libreoffice.org/).
 
               [1]: https://web.archive.org/web/20221029140306/https://en.wikipedia.org/wiki/LibreOffice "LibreOffice | Wikipedia | en.wikipedia.org"
@@ -1810,11 +1813,12 @@ actions:
               When enabled, GNOME Software submits a report of installed and used applications to a central
               server [1]. The data is used to produce popularity information for the software catalogue [1].
 
-              Some distributions, notably Ubuntu, enable this setting by default [1].
+              GNOME ships this setting turned off [2]. It is on only if you, or your distribution's first-run setup, turned it on.
 
-              If you do not run this script, your application usage continues to be reported.
+              If it is on and you do not run this script, your application usage continues to be reported.
 
               [1]: https://web.archive.org/web/20240523104715/https://gitlab.gnome.org/GNOME/gnome-software/-/blob/main/data/org.gnome.software.gschema.xml "org.gnome.software.gschema.xml | GNOME GitLab | gitlab.gnome.org"
+              [2]: https://web.archive.org/web/20240523105320/https://gitlab.gnome.org/GNOME/gsettings-desktop-schemas/-/blob/master/schemas/org.gnome.desktop.privacy.gschema.xml.in "org.gnome.desktop.privacy.gschema.xml.in | GNOME GitLab | gitlab.gnome.org"
             call:
               function: SetGnomeSetting
               parameters:
@@ -1831,9 +1835,9 @@ actions:
               along with information about your system and the program that failed [1]. Crash reports can
               contain memory contents, file paths and command-line arguments.
 
-              This setting is enabled by default [1].
+              GNOME ships this setting turned off [1]. It is on only if you, or your distribution's first-run setup, turned it on.
 
-              If you do not run this script, technical problem reports continue to be submitted automatically.
+              If it is on and you do not run this script, technical problem reports continue to be submitted automatically.
 
               [1]: https://web.archive.org/web/20240523105320/https://gitlab.gnome.org/GNOME/gsettings-desktop-schemas/-/blob/master/schemas/org.gnome.desktop.privacy.gschema.xml.in "org.gnome.desktop.privacy.gschema.xml.in | GNOME GitLab | gitlab.gnome.org"
             call:
