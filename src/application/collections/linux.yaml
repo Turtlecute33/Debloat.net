@@ -1354,6 +1354,8 @@ actions:
               When using systemd to start services or processes, the crash logs are stored in the `/var/lib/systemd/coredump/`
               directory [7].
 
+              Apport also keeps core dumps of crashed programs in the `/var/lib/apport/coredump/` directory [8].
+
               [1]: https://web.archive.org/web/20221029145818/https://refspecs.linuxfoundation.org/FHS_2.3/fhs-2.3.html "Filesystem Hierarchy Standard | FHS | linuxfoundation.org"
               [2]: https://web.archive.org/web/20221029150025/https://support.starlabs.systems/kb/guides/disable-program-problem-reports "Disable program problem reports | Star Labs | support.starlabs.systems"
               [3]: https://web.archive.org/web/20221029150105/https://elinux.org/Crash_Diagnostics "Crash Diagnostics | eLinux.org"
@@ -1361,9 +1363,11 @@ actions:
               [5]: https://web.archive.org/web/20221029150311/https://wiki.ubuntu.com/AutomatedProblemReports "AutomatedProblemReports - Ubuntu Wiki | wiki.ubuntu.com"
               [6]: https://web.archive.org/web/20221029150331/https://bugs.launchpad.net/apport/+bug/357024 "Bug #357024 (pertian7) “security hole in /etc/cron.daily/apport” : Bugs : Apport | bugs.launchpad.net"
               [7]: https://web.archive.org/web/20221029211018/https://www.freedesktop.org/software/systemd/man/systemd-coredump.html "systemd-coredump | freedesktop.org"
+              [8]: https://github.com/canonical/apport/blob/2.28.1/apport/fileutils.py#L35 "apport/fileutils.py (tag 2.28.1) · canonical/apport | github.com"
             code: |-
               sudo rm -rfv /var/crash/*
               sudo rm -rfv /var/lib/systemd/coredump/
+              sudo rm -rfv /var/lib/apport/coredump/*
           -
             name: Clear system logs (`journald`)
             docs: |-
