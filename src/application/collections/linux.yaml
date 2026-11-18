@@ -1326,13 +1326,9 @@ actions:
                 function: RunIfCommandExists
                 parameters:
                   command: journalctl
-                  code: sudo journalctl --vacuum-time=1s
-              -
-                function: RunInlineCode
-                parameters:
                   code: |-
-                    sudo rm -rfv /run/log/journal/*
-                    sudo rm -rfv /var/log/journal/*
+                    sudo journalctl --rotate
+                    sudo journalctl --vacuum-time=1s
       -
         category: Clear recently used files list
         docs: |-
