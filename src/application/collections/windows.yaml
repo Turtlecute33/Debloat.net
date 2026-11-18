@@ -22819,6 +22819,11 @@ actions:
                                 #   If the dependent services are not running, the script fails with:
                                 #       "An error occurred while attempting to contact the "Windows Defender Firewall" service. Make sure that the service is running and try your request again."
                                 #   Requires rebooting after reverting privacy.sexy scripts for the services mpsdrv, mpssvc
+                                # Revert:
+                                #   The service scripts' revert runs first but MpsSvc only starts after a reboot, so `netsh` fails here
+                                #   in the usual case, and its message is localized. On any `netsh` failure the revert therefore writes
+                                #   `EnableFirewall=1` for each profile in the registry, as "Disable Firewall via registry" does on revert,
+                                #   so the firewall is on when the service starts after the restart.
                                 docs: https://web.archive.org/web/20240314125017/https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/netsh-advfirewall-firewall-control-firewall-behavior
                                 call:
                                     function: RunPowerShell
@@ -22845,11 +22850,16 @@ actions:
                                             if($?) {
                                                 Write-Host "Successfully enabled firewall."
                                             } else {
-                                                if($message -like '*Firewall service*') {
-                                                    Write-Warning 'Cannot use CLI because MpsSvc or MpsDrv is not running. Try to enable them (revert) -> reboot -> re-run this?'
-                                                } else {
-                                                    throw "Cannot enable: $message"
+                                                foreach ($profileName in 'DomainProfile', 'StandardProfile', 'PublicProfile') {
+                                                    $keyPath = "HKLM:\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\$profileName"
+                                                    try {
+                                                        Set-ItemProperty -Path $keyPath -Name 'EnableFirewall' -Value 1 -Type DWord -ErrorAction Stop
+                                                    } catch {
+                                                        throw "Cannot enable firewall. netsh failed with: $message. Writing EnableFirewall in '$keyPath' also failed: $_"
+                                                    }
                                                 }
+                                                Write-Warning "netsh could not enable the firewall, most likely because the firewall service (MpsSvc) is not running yet: $message"
+                                                Write-Warning 'The firewall is enabled in the registry instead. It turns on after you restart the computer.'
                                             }
                             -
                                 name: Disable Firewall via registry # Lower-level, good in case command-line utility is not available/functioning
