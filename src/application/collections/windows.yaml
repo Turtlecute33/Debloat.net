@@ -2787,7 +2787,7 @@ actions:
                         valueName: DisableResetbase
                         dataType: REG_DWORD
                         data: '0'
-                        dataOnRevert: '1' # Default value: `1` on Windows 10 Pro (≥ 21H1) | 🔍 Missing on Windows 11 Pro 21H1 | `1` on Windows 11 Pro (≥ 22H2)
+                        dataOnRevert: '1' # Default value: `1` on Windows 10 Pro (≥ 21H1) | 🔍 Missing on Windows 11 Pro 21H2 | `1` on Windows 11 Pro (≥ 22H2)
                         elevateToTrustedInstaller: 'true' # Administrators get "Access is denied" (Windows 11 25H2, Windows Server 2025)
             -
                 name: Clear Delivery Optimization cache
@@ -11629,13 +11629,13 @@ actions:
                                 name: Disable Edge remote background images on new tab page
                                 recommend: strict # Minor privacy impact
                                 docs: |- # refactor-with-variables: • Chromium Policy Caution
-                                    This script disables background images recevied by Microsoft servers on new tab.
+                                    This script disables background images received from Microsoft servers on new tab.
 
                                     By default, if you do not run this script, all background image types on the new tab page are enabled [1] [2].
                                     It allows using custom image disabling only daily background image type [1] [2].
 
-                                    Disabling this feature removes unecessary network traffic with Microsoft servers that may leak data
-                                    and your usage of behavior. It also optimizes system by simplifying the browser usage and removing nunnecssary network traffic.
+                                    Disabling this feature removes unnecessary network traffic with Microsoft servers that may leak data
+                                    and your usage of behavior. It also optimizes system by simplifying the browser usage and removing unnecessary network traffic.
 
                                     This script configures the `NewTabPageAllowedBackgroundTypes` Edge policy to value `1` (`DisableImageOfTheDay`) [1] [2].
 
@@ -18580,7 +18580,7 @@ actions:
                                                 function: DisableService
                                                 parameters:
                                                     serviceName: SgrmAgent # Check: (Get-Service -Name 'SgrmAgent').StartType
-                                                    defaultStartupMode: Boot # Alowed values: Boot | System | Automatic | Manual
+                                                    defaultStartupMode: Boot # Allowed values: Boot | System | Automatic | Manual
                                                     maximumWindowsVersion: 'Windows11-21H2'
                                             -
                                                 function: DisableService
@@ -18664,7 +18664,7 @@ actions:
                                                 function: DisableServiceInRegistry
                                                 parameters:
                                                     serviceName: SgrmBroker # Check: (Get-Service -Name 'SgrmBroker').StartType
-                                                    defaultStartupMode: Automatic # Alowed values: Boot | System | Automatic | Manual
+                                                    defaultStartupMode: Automatic # Allowed values: Boot | System | Automatic | Manual
                                                     maximumWindowsVersion: 'Windows11-21H2'
                                             -
                                                 function: DisableServiceInRegistry 
@@ -22724,7 +22724,7 @@ actions:
                                             Disabling this driver may enhance privacy by preventing the system from performing detailed network data inspections and logging.
                                             Additionally, the script may slightly boost system performance and shorten boot times by stopping the driver from loading at startup.
 
-                                            On On modern Windows versions, this driver is either missing entirely or is stopped and set to **Manual** by default [1].
+                                            On modern Windows versions, this driver is either missing entirely or is stopped and set to **Manual** by default [1].
                                             This means it does not actively run unless specifically triggered.
 
                                             However, disabling this driver poses security risks:
@@ -24787,7 +24787,7 @@ actions:
                                                 parameters:
                                                     # Availability: ❌ Windows 10 Pro (≥ 22H2) | ✅ Windows 11 Pro (≥ 23H2)
                                                     serviceName: webthreatdefsvc # (Get-Service -Name 'webthreatdefsvc').StartType
-                                                    defaultStartupMode: Manual # Alowed values: Boot | System | Automatic | Manual
+                                                    defaultStartupMode: Manual # Allowed values: Boot | System | Automatic | Manual
                                                     minimumWindowsVersion: 'Windows11-22H2'
                                             -
                                                 function: SoftDeleteFiles
@@ -24801,7 +24801,7 @@ actions:
                                                 parameters:
                                                     # Availability: ❌ Windows 10 Pro (≥ 22H2) | ✅ Windows 11 Pro (≥ 23H2)
                                                     serviceName: webthreatdefusersvc # (Get-Service -Name 'webthreatdefusersvc').StartType
-                                                    defaultStartupMode: Automatic # Alowed values: Boot | System | Automatic | Manual
+                                                    defaultStartupMode: Automatic # Allowed values: Boot | System | Automatic | Manual
                                                     minimumWindowsVersion: 'Windows11-22H2'
                                             -
                                                 function: SoftDeleteFiles
@@ -26443,7 +26443,7 @@ actions:
                                                 function: DisableServiceInRegistry
                                                 parameters:
                                                     serviceName: wscsvc # Check: (Get-Service -Name 'wscsvc').StartType
-                                                    defaultStartupMode: Automatic # Alowed values: Boot | System | Automatic | Manual
+                                                    defaultStartupMode: Automatic # Allowed values: Boot | System | Automatic | Manual
                                                     elevateToTrustedInstaller: 'true'
                                             -
                                                 function: SoftDeleteFiles
@@ -28337,7 +28337,7 @@ actions:
                                     - WD modern host server [1] [4] (File: `%PROGRAMFILES%\Windows Defender\MpUXSrv.exe` [4])
                                     - Defender MpUxAgent [6] (File: `%PROGRAMDATA%\Microsoft\Windows Defender\Platform\*\MPUXAGENT.DLL` [5] [7])
                                     - Defender MpUxAgent (CLSID: `4DB116D1-9B24-4DFC-946B-BFE03E852002` [5] [7])
-                                    - Defender MpUxAgent (CLSID: `2DCD7FDB-8809-48E4-8E4F-3157C57CF987}` [5] [7])
+                                    - Defender MpUxAgent (CLSID: `{2DCD7FDB-8809-48E4-8E4F-3157C57CF987}` [5] [7])
                                     - Defender Data Loss Prevention UI (Application User Model ID: `Windows.Defender.MpUxDlp` [5])
                                     - MpUx Agent Host [5] [8] (AppID: `1111a26d-ef95-4a45-9f55-21e52adf9887` [5] [8])
                                     - COM Proxy for mpuxhost (MP Modern shell host) [9] (file: `%PROGRAMFILES%\Windows Defender\mpuxhostproxy.dll` [3] [7])
@@ -31056,7 +31056,7 @@ actions:
             -
                 category: Configure how downloaded files are handled
                 docs: |-
-                    These scripts configures Attachment Manager included in Windows that takes further actions for
+                    These scripts configure Attachment Manager included in Windows that takes further actions for
                     files that you receive or download such as storing classification metadata and notifying other software [1].
 
                     [1]: https://web.archive.org/web/20250311093753/https://support.microsoft.com/en-us/topic/information-about-the-attachment-manager-in-microsoft-windows-c48a4dcd-8de5-2af5-ee9b-cd795ae42738 "Information about the Attachment Manager in Microsoft Windows | support.microsoft.com"
@@ -31712,7 +31712,7 @@ actions:
                                     # Check: start shell:::{374DE290-123F-4565-9164-39C4925E467B}
                                     folderClsid: '374DE290-123F-4565-9164-39C4925E467B' # CLSID_ThisPCDownloadsRegFolder
                     -
-                        name: Remove "Videos"folder from This PC in File Explorer
+                        name: Remove "Videos" folder from This PC in File Explorer
                         docs: |- # refactor-with-variables: Same • Quick Access Productivity
                             This script hides the **Videos** folder from **This PC** in **File Explorer**.
                             
@@ -32046,7 +32046,7 @@ actions:
                                     This app enhances 3D printing by supporting network printers, optimizing settings, and rendering objects realistically [1].
 
                                     However, this app poses certain risks.
-                                    The application can access the Internet, home or work networksm and your 3D objects [1].
+                                    The application can access the Internet, home or work networks, and your 3D objects [1].
                                     It has known serious security vulnerabilities such as "Remote Code Execution Vulnerability" [2].
                                     These vulnerabilities allow attackers to remotely execute malicious code on your system.
                                     This app is no longer supported [3], and Microsoft does not plan to issue patches [2].
@@ -32418,7 +32418,7 @@ actions:
                             [4]: https://web.archive.org/web/20210727081048/https://docs.microsoft.com/en-us/windows/application-management/apps-in-windows-10 "Windows 10 - Apps - Windows Application Management | Microsoft Docs"
                             [5]: https://web.archive.org/web/20221101231811/https://learn.microsoft.com/en-us/windows/application-management/provisioned-apps-windows-client-os "Get the provisioned apps on Windows client operating system - Windows Application Management | Microsoft Learn"
                             [6]: https://web.archive.org/web/20231230073627/https://learn.microsoft.com/en-us/windows/application-management/remove-provisioned-apps-during-update "Keep removed apps from returning during an update - Windows Application Management | Microsoft Learn"
-                            [7]: https://web.archive.org/web/20240613063743/https://www.sita.co.za/sites/default/files/documents/Product_Certification/TASRR40_Windows_optimisation.pdf "List of installed apps: Windows 11 | TAS Research Report: Desktop Windows Optimisation | www.sita.co.za"e
+                            [7]: https://web.archive.org/web/20240613063743/https://www.sita.co.za/sites/default/files/documents/Product_Certification/TASRR40_Windows_optimisation.pdf "List of installed apps: Windows 11 | TAS Research Report: Desktop Windows Optimisation | www.sita.co.za"
                         call:
                             function: UninstallStoreApp
                             parameters:
@@ -34019,7 +34019,7 @@ actions:
                                 docs: |-
                                     [Microsoft Store Page](https://archive.ph/2023.10.07-112247/https://apps.microsoft.com/detail/9WZDNCRFJ27N?hl=en-us&gl=US)
 
-                                    This apps is also known as just "Photoshop Express" [1].
+                                    This app is also known as just "Photoshop Express" [1].
 
                                     ### Overview of default preinstallation
 
@@ -41932,7 +41932,7 @@ functions:
         #   Use `DeleteDirectory` or `ClearDirectoryContents` to delete directories.
         parameters:
             - name: fileGlob            # File glob pattern to delete.
-            - name: grantPermissions    # Grants permission on the files found, and restores original permissions after modification.
+            - name: grantPermissions    # Takes ownership and grants Administrators full control so the files can be removed; files that remain keep the new owner and permissions.
               optional: true
         call:
             -
@@ -42567,7 +42567,7 @@ functions:
             for taskbar-related functionalities [1].
             Although these settings are not extensively documented [1], they are acknowledged by Microsoft [2].
 
-            The function modifies the registry key `HKCU\Software\Microsoft\Windows\CurrentVersion\Policies\Explorer!DisabledHotkeys` [1] [3] [4].
+            The function modifies the registry key `HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced!DisabledHotkeys` [1] [3] [4].
             The specified alphabetical character must be provided in uppercase for the registry data [1].
             This adjustment requires a restart of the explorer process (`explorer.exe`) [3] [5] or a system restart [4].
 
@@ -43004,7 +43004,7 @@ functions:
                 parameters:
                     codeComment: Configure "{{ $valueName }}" for .NET applications
                     revertCodeComment: Restore "{{ $valueName }}" configuration for .NET applications
-            - # x86 | = .NET Framework 3.5
+            - # x64 | = .NET Framework 3.5
                 function: SetRegistryValue
                 parameters:
                     keyPath: HKLM\SOFTWARE\Microsoft\.NETFramework\v2.0.50727
@@ -43012,7 +43012,7 @@ functions:
                     dataType: REG_DWORD
                     data: '{{ $valueData }}'
                     deleteOnRevert: 'true' # Missing by default since Windows 10 Pro (≥ 22H2) and Windows 11 Pro (≥ 23H2)
-            - # x64 | = .NET Framework 3.5
+            - # x86 | = .NET Framework 3.5
                 function: SetRegistryValue
                 parameters:
                     keyPath: HKLM\SOFTWARE\WOW6432Node\Microsoft\.NETFramework\v2.0.50727
@@ -43020,7 +43020,7 @@ functions:
                     dataType: REG_DWORD
                     data: '{{ $valueData }}'
                     deleteOnRevert: 'true' # Missing by default since Windows 10 Pro (≥ 22H2) and Windows 11 Pro (≥ 23H2)
-            - # x86 | ≥ .NET Framework 4
+            - # x64 | ≥ .NET Framework 4
                 function: SetRegistryValue
                 parameters:
                     keyPath: HKLM\SOFTWARE\Microsoft\.NETFramework\v4.0.30319
@@ -43028,7 +43028,7 @@ functions:
                     dataType: REG_DWORD
                     data: '{{ $valueData }}'
                     deleteOnRevert: 'true' # Missing by default since Windows 10 Pro (≥ 22H2) and Windows 11 Pro (≥ 23H2)
-            -  # x64 | ≥ .NET Framework 4
+            -  # x86 | ≥ .NET Framework 4
                 function: SetRegistryValue
                 parameters:
                     keyPath: HKLM\SOFTWARE\WOW6432Node\Microsoft\.NETFramework\v4.0.30319
@@ -44353,7 +44353,7 @@ functions:
             This function removes a program from the **Open With** context menu for a specific file extension.
 
             Windows stores file associations in the Registry under `HKCU\Software\Classes` and `HKLM\Software\Classes` [1].
-            This function modifies the `HKCU\` key, which takes precedence over `HKLM\` [1].
+            This function modifies the `HKLM\` key, which applies to all users. A per-user `HKCU\` entry takes precedence over it [1].
 
             [1]: https://web.archive.org/web/20240802114228/https://learn.microsoft.com/en-us/windows/win32/sysinfo/hkey-classes-root-key "HKEY_CLASSES_ROOT Key - Win32 apps | Microsoft Learn | learn.microsoft.com"
         call:
@@ -45273,6 +45273,6 @@ functions:
                     valueName: "{{ $valueName }}"
                     dataType: REG_DWORD
                     data: '0'
-                    deleteOnRevert: 'true' # Missing by default since Windows 10 Pro (≥ 22H2) and Windows 11 Pro (≥ 23H2) | Tested since EdgeUpdate ≥ 1.3.187.41
+                    deleteOnRevert: 'true' # Missing by default since Windows 10 Pro (≥ 22H2) and Windows 11 Pro (≥ 23H2)
                     minimumWindowsVersion: Windows11-FirstRelease # No TrustedInstaller is needed on Windows 10, but the functionality is missing so the script won't work.
                     elevateToTrustedInstaller: 'true' # Without TrustedInstaller: ✅ Windows 10 Pro (>= 20H2) | ❌ Windows 11 Pro (>= 23H2)

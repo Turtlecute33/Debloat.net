@@ -4774,9 +4774,9 @@ functions:
             - name: key             # Name of the preference key to write.
             - name: valueType       # Type flag for `defaults` without the leading dash: `bool`, `int`, `float` or `string`.
             - name: value           # Value to write when the script runs.
-            - name: defaultValue    # Value restored on revert. Cannot be combined with `deleteOnRevert`.
+            - name: defaultValue    # Not used: revert restores the value recorded before the change.
               optional: true
-            - name: deleteOnRevert  # When set, revert deletes the key instead of restoring a value.
+            - name: deleteOnRevert  # Not used: revert deletes the key only if it was absent before the change.
               optional: true
         call:
             function: RunAsTargetUser
