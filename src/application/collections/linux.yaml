@@ -5215,11 +5215,16 @@ functions:
           ]
           for settings_file in settings_files:
             file=Path(settings_file)
-            if not file.is_file():
+            if file.is_file():
+              print(f'Reading file at "{settings_file}".')
+              file_content = file.read_text()
+            elif not os.path.lexists(settings_file) and file.parent.is_dir():
+              # VS Code creates the file only when a setting is first changed.
+              print(f'Settings file does not exist at "{settings_file}". Treating it as default empty JSON object.')
+              file_content = '{}'
+            else:
               print(f'Skipping, file does not exist at "{settings_file}".')
               continue
-            print(f'Reading file at "{settings_file}".')
-            file_content = file.read_text()
             if not file_content.strip():
               print('Settings file is empty. Treating it as default empty JSON object.')
               file_content = '{}'
