@@ -2730,24 +2730,6 @@ actions:
                         function: DisableSystemdService
                         parameters:
                           serviceName: whoopsie
-                  -
-                    name: Disable crash report submissions
-                    recommend: standard
-                    docs: |-
-                      Once opted-out Whoopsie disables the related service [1].
-
-                      This script is used as part of a post-installation script by the National Cyber Security Centre in the UK [2].
-
-                      [1]: https://web.archive.org/web/20221029163651/https://bugs.launchpad.net/ubuntu/+source/whoopsie/+bug/1390014 "Bug #1390014 “systemd is in degraded state if whoopsie is disabl...” : Bugs : whoopsie package : Ubuntu | bugs.launchpad.net"
-                      [2]: https://web.archive.org/web/20221029163054/https://www.ncsc.gov.uk/files/ubuntu1804_post_install.sh_.txt "ubuntu1804_post_install.sh_.txt | nscs.gov.uk"
-                    code: |-
-                      if [ -f /etc/default/whoopsie ] ; then
-                        sudo sed -i 's/report_crashes=true/report_crashes=false/' /etc/default/whoopsie
-                      fi
-                    revertCode: |-
-                      if [ -f /etc/default/whoopsie ] ; then
-                        sudo sed -i 's/report_crashes=false/report_crashes=true/' /etc/default/whoopsie
-                      fi
       -
         name: Disable connectivity checks (breaks Captive Portal detection)
         docs: |-
