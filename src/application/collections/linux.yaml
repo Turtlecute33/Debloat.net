@@ -5198,11 +5198,13 @@ functions:
           {{ end }}
   -
     name: DeleteFileFromUserAndRootHome
+    # Deletes the user's copy as the user, see `DeleteFileFromUserAndRootHomeAsOwner`.
     parameters:
       - name: file
-    code: |-
-      rm -fv ~/{{ $file }}
-      sudo rm -fv /root/{{ $file }}
+    call:
+      function: DeleteFileFromUserAndRootHomeAsOwner
+      parameters:
+        file: '{{ $file }}'
   -
     name: SetVsCodeSetting
     parameters:
@@ -5657,37 +5659,50 @@ functions:
             fileGlob: ~/snap/firefox/common/.mozilla/firefox/*/{{ $pathGlob }}
   -
     name: DeleteFileFromThunderbirdProfiles
+    # `rm` runs as the user, so a folder that the user replaced with a symbolic link cannot make root
+    # delete files outside the home folder. The paths are still expanded here.
     parameters:
       - name: file
-    code: |-
-      # {{ $file }}: Global installation
-      rm -fv ~/.thunderbird/*/{{ $file }}
-      # {{ $file }}: Global installation, Thunderbird 154 and later on a new installation (XDG Base Directory location)
-      rm -fv ~/.config/thunderbird/*/{{ $file }}
-      # {{ $file }}: Snap installation
-      rm -fv ~/snap/thunderbird/common/.thunderbird/*/{{ $file }}
-      # {{ $file }}: Flatpak installation
-      rm -fv ~/.var/app/org.mozilla.Thunderbird/.thunderbird/*/{{ $file }}
+    call:
+      function: RunAsTargetUser
+      parameters:
+        code: |-
+          # {{ $file }}: Global installation
+          run_as_target_user rm -fv -- ~/.thunderbird/*/{{ $file }}
+          # {{ $file }}: Global installation, Thunderbird 154 and later on a new installation (XDG Base Directory location)
+          run_as_target_user rm -fv -- ~/.config/thunderbird/*/{{ $file }}
+          # {{ $file }}: Snap installation
+          run_as_target_user rm -fv -- ~/snap/thunderbird/common/.thunderbird/*/{{ $file }}
+          # {{ $file }}: Flatpak installation
+          run_as_target_user rm -fv -- ~/.var/app/org.mozilla.Thunderbird/.thunderbird/*/{{ $file }}
   -
     name: DeleteFileFromGNOMEWebData
+    # `rm` runs as the user for the same reason as in `DeleteFileFromThunderbirdProfiles`.
     parameters:
       - name: file
-    code: |-
-      # {{ $file }}: Global installation
-      rm -fv ~/.local/share/epiphany/{{ $file }}
-      # {{ $file }}: Flatpak installation
-      rm -fv ~/.var/app/org.gnome.Epiphany/data/epiphany/{{ $file }}
-      # {{ $file }}: Snap installation
-      rm -fv ~/snap/epiphany/*/.local/share/epiphany/{{ $file }}
+    call:
+      function: RunAsTargetUser
+      parameters:
+        code: |-
+          # {{ $file }}: Global installation
+          run_as_target_user rm -fv -- ~/.local/share/epiphany/{{ $file }}
+          # {{ $file }}: Flatpak installation
+          run_as_target_user rm -fv -- ~/.var/app/org.gnome.Epiphany/data/epiphany/{{ $file }}
+          # {{ $file }}: Snap installation
+          run_as_target_user rm -fv -- ~/snap/epiphany/*/.local/share/epiphany/{{ $file }}
   -
     name: ClearDirFromVsCodeUserDataDir
+    # `rm` runs as the user for the same reason as in `DeleteFileFromThunderbirdProfiles`.
     parameters:
       - name: directory # Whitespaces must be escaped with /
-    code: |-
-      # {{ $directory }}: Global installation (also Snap with --classic)
-      rm -rfv ~/.config/Code/{{ $directory }}/*
-      # {{ $directory }}: Flatpak installation
-      rm -rfv ~/.var/app/com.visualstudio.code/config/Code/{{ $directory }}/*
+    call:
+      function: RunAsTargetUser
+      parameters:
+        code: |-
+          # {{ $directory }}: Global installation (also Snap with --classic)
+          run_as_target_user rm -rfv -- ~/.config/Code/{{ $directory }}/*
+          # {{ $directory }}: Flatpak installation
+          run_as_target_user rm -rfv -- ~/.var/app/com.visualstudio.code/config/Code/{{ $directory }}/*
   -
     name: PersistSystemEnvironmentVariable
     parameters:
