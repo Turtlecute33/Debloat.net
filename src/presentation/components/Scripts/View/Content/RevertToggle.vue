@@ -4,6 +4,7 @@
     :stop-click-propagation="true"
     label="Revert"
     off-label="Apply"
+    :subject-name="subjectName"
   />
 </template>
 
@@ -15,6 +16,7 @@ import { injectKey } from '@/presentation/injectionSymbols';
 import type { NodeMetadata } from '@/presentation/components/Scripts/View/Content/NodeMetadata';
 import type { CategoryCollection } from '@/domain/Collection/CategoryCollection';
 import { getReverter } from './Reverter/ReverterFactory';
+import { removeMarkdownFormatting } from './Markdown/RemoveMarkdownFormatting';
 import ToggleSwitch from './ToggleSwitch.vue';
 import type { Reverter } from './Reverter/Reverter';
 
@@ -59,8 +61,11 @@ export default defineComponent({
       });
     }
 
+    const subjectName = computed<string>(() => removeMarkdownFormatting(props.node.text));
+
     return {
       isReverted,
+      subjectName,
     };
   },
 });

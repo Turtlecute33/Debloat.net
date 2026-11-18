@@ -7,7 +7,7 @@
       v-model="isChecked"
       type="checkbox"
       class="toggle-input"
-      :aria-label="`${isChecked ? label : resolvedOffLabel} this setting`"
+      :aria-label="`${isChecked ? label : resolvedOffLabel} ${subjectName}`"
     >
     <div class="toggle-animation">
       <div class="circle" />
@@ -37,6 +37,11 @@ export default defineComponent({
     offLabel: {
       type: String,
       default: undefined,
+    },
+    /** What the switch acts on, in plain text. Completes its accessible name. */
+    subjectName: {
+      type: String,
+      default: 'this setting',
     },
     stopClickPropagation: {
       type: Boolean,

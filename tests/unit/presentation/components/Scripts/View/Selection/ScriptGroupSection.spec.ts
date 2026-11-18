@@ -3,6 +3,7 @@ import { shallowMount } from '@vue/test-utils';
 import ScriptGroupSection from '@/presentation/components/Scripts/View/Selection/ScriptGroupSection.vue';
 import ScriptRow from '@/presentation/components/Scripts/View/Selection/ScriptRow.vue';
 import SelectionCheckbox from '@/presentation/components/Scripts/View/Selection/SelectionCheckbox.vue';
+import ToggleSwitch from '@/presentation/components/Scripts/View/Content/ToggleSwitch.vue';
 import { InjectionKeys } from '@/presentation/injectionSymbols';
 import { UserSelectionStub } from '@tests/unit/shared/Stubs/UserSelectionStub';
 import { ScriptSelectionStub } from '@tests/unit/shared/Stubs/ScriptSelectionStub';
@@ -66,18 +67,37 @@ describe('ScriptGroupSection.vue', () => {
       })));
     });
   });
+
+  it('names the group revert switch after the group in plain text', () => {
+    // arrange
+    const group = createGroup(2, {
+      name: 'Disable `pkgstats` **reports**',
+      isReversible: true,
+    });
+    const expectedSubjectName = 'Disable pkgstats reports';
+
+    // act
+    const wrapper = mountComponent({ group });
+
+    // assert
+    const toggleSwitch = wrapper.findComponent(ToggleSwitch);
+    expect(toggleSwitch.props('subjectName')).to.equal(expectedSubjectName);
+  });
 });
 
-function createGroup(scriptCount: number): ScriptGroup {
+function createGroup(scriptCount: number, options?: {
+  readonly name?: string,
+  readonly isReversible?: boolean,
+}): ScriptGroup {
   return {
     categoryId: 'category',
-    name: 'Group',
+    name: options?.name ?? 'Group',
     docs: [],
     scripts: Array.from({ length: scriptCount }, (_, index) => ({
       scriptId: `script-${index}`,
       name: `Script ${index}`,
       docs: [],
-      isReversible: false,
+      isReversible: options?.isReversible ?? false,
     })),
   };
 }

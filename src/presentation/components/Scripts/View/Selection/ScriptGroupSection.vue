@@ -32,6 +32,7 @@
           v-model="isGroupReverted"
           label="Revert"
           off-label="Apply"
+          :subject-name="plainGroupName"
         />
       </div>
     </header>
@@ -53,6 +54,7 @@ import {
 import { injectKey } from '@/presentation/injectionSymbols';
 import DocumentationTooltip from '@/presentation/components/Scripts/View/Content/Documentation/DocumentationTooltip.vue';
 import ToggleSwitch from '@/presentation/components/Scripts/View/Content/ToggleSwitch.vue';
+import { removeMarkdownFormatting } from '@/presentation/components/Scripts/View/Content/Markdown/RemoveMarkdownFormatting';
 import type { ExecutableId } from '@/domain/Executables/Identifiable';
 import type { ScriptSelectionChange } from '@/application/Context/State/Selection/Script/ScriptSelectionChange';
 import SelectionCheckbox from './SelectionCheckbox.vue';
@@ -108,6 +110,8 @@ export default defineComponent({
 
     const isAnySelected = computed<boolean>(() => selectedCount.value > 0);
 
+    const plainGroupName = computed<string>(() => removeMarkdownFormatting(props.group.name));
+
     const isWhollyReversible = computed<boolean>(
       () => props.group.scripts.every((script) => script.isReversible),
     );
@@ -154,6 +158,7 @@ export default defineComponent({
       renderedScripts,
       isWhollyReversible,
       isGroupReverted,
+      plainGroupName,
       selectedCount,
       areAllSelected,
       isAnySelected,

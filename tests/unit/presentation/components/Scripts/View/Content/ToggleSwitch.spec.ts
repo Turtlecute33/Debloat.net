@@ -85,6 +85,51 @@ describe('ToggleSwitch.vue', () => {
       });
     });
   });
+  describe('accessible name', () => {
+    const testScenarios: ReadonlyArray<{
+      readonly description: string;
+      readonly initialValue: boolean;
+      readonly subjectName?: string;
+      readonly expectedName: string;
+    }> = [
+      {
+        description: 'names the subject when off',
+        initialValue: false,
+        subjectName: 'Clear system logs',
+        expectedName: 'Apply Clear system logs',
+      },
+      {
+        description: 'names the subject when on',
+        initialValue: true,
+        subjectName: 'Clear system logs',
+        expectedName: 'Revert Clear system logs',
+      },
+      {
+        description: 'falls back to "this setting" without a subject',
+        initialValue: true,
+        expectedName: 'Revert this setting',
+      },
+    ];
+    testScenarios.forEach(({
+      description, initialValue, subjectName, expectedName,
+    }) => {
+      it(description, () => {
+        // act
+        const wrapper = mountComponent({
+          properties: {
+            modelValue: initialValue,
+            label: 'Revert',
+            offLabel: 'Apply',
+            subjectName,
+          },
+        });
+
+        // assert
+        const { checkboxWrapper } = getCheckboxElement(wrapper);
+        expect(checkboxWrapper.attributes('aria-label')).to.equal(expectedName);
+      });
+    });
+  });
   describe('model updates', () => {
     describe('emission on change', () => {
       const testScenarios: ReadonlyArray<{
@@ -216,6 +261,8 @@ function mountComponent(options?: {
   readonly properties?: {
     readonly modelValue?: boolean,
     readonly label?: string,
+    readonly offLabel?: string,
+    readonly subjectName?: string,
     readonly stopClickPropagation?: boolean,
   }
 }) {
@@ -223,6 +270,8 @@ function mountComponent(options?: {
     props: {
       modelValue: options?.properties?.modelValue,
       label: options?.properties?.label ?? 'test-label',
+      offLabel: options?.properties?.offLabel,
+      subjectName: options?.properties?.subjectName,
       stopClickPropagation: options?.properties?.stopClickPropagation,
     },
   });
