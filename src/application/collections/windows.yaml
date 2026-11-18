@@ -40750,6 +40750,9 @@ functions:
             Modifies the setting in VSCode's settings.json file located at:
             `%APPDATA%\Code\User\settings.json` [1].
 
+            Creates the file when it is missing but VSCode's `User` folder exists, so the setting applies before
+            VSCode has written the file.
+
             Removes the setting during revert since default VSCode has no explicit settings.
 
             [1]: https://web.archive.org/web/20250415234459/https://code.visualstudio.com/docs/configure/settings "User and workspace settings | code.visualstudio.com"
@@ -40766,6 +40769,7 @@ functions:
                     propertyKey: '{{ $settingName }}'
                     powerShellValueExpression: '{{ $powerShellValueExpression }}'
                     deleteOnRevert: 'true' # Default VSCode has no explicit settings
+                    createMissingFile: 'true' # Without it a missing file is skipped and the setting is not applied
     -
         name: RunPowerShell
         parameters:
