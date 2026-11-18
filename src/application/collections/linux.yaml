@@ -6645,7 +6645,7 @@ functions:
         if [ "$modprobe_rebuild_initramfs" = 'true' ] && command -v update-initramfs > /dev/null 2>&1; then
           echo 'Rebuilding the initial RAM disk so that it blocks these modules during early boot too.'
           if ! sudo update-initramfs -u; then
-            >&2 echo 'Failed to rebuild the initial RAM disk; the modules may still load early during boot.'
+            >&2 echo 'Failed to rebuild the initial RAM disk; run "sudo update-initramfs -u" yourself, or the modules may still load early during boot.'
           fi
         fi
       fi
