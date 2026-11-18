@@ -1694,6 +1694,18 @@ actions:
                                             fileGlob: '%LOCALAPPDATA%\Packages\Mozilla.Firefox_n80bbvh6b1yt2\LocalCache\Roaming\Mozilla\Firefox\installs.ini'
                     -
                         name: Clear Opera history (user profiles, settings, and data)
+                        docs: |-
+                            This script deletes Opera's user data, which holds every Opera profile, and Opera's cache.
+
+                            Current Opera, which is built on Chromium, keeps its user data in `%APPDATA%\Opera Software\Opera Stable`
+                            and its cache in `%LOCALAPPDATA%\Opera Software\Opera Stable` [1]. The script also clears the
+                            `Opera\Opera` folders of older Opera versions.
+
+                            > **Caution:** This deletes all bookmarks, saved passwords, extensions and settings in Opera, not only
+                            > the history [2]. It cannot be undone.
+
+                            [1]: https://web.archive.org/web/20260719125639/https://kb.digital-detective.net/display/BF/Location+of+Opera+Blink+Data "Location of Opera Blink Data | Digital Detective Knowledge Base | kb.digital-detective.net"
+                            [2]: https://web.archive.org/web/20261117162946/https://help.opera.com/en/latest/crashes-and-issues/#backup "Crashes and issues | Opera Help | help.opera.com"
                         call:
                             - # Windows XP
                                 function: ClearDirectoryContents
@@ -1707,6 +1719,14 @@ actions:
                                 function: ClearDirectoryContents
                                 parameters:
                                     directoryGlob: '%APPDATA%\Opera\Opera'
+                            - # Opera built on Chromium: user data (every profile)
+                                function: ClearDirectoryContents
+                                parameters:
+                                    directoryGlob: '%APPDATA%\Opera Software\Opera Stable'
+                            - # Opera built on Chromium: cache
+                                function: ClearDirectoryContents
+                                parameters:
+                                    directoryGlob: '%LOCALAPPDATA%\Opera Software\Opera Stable'
                     -
                         category: Clear Safari history
                         children:
