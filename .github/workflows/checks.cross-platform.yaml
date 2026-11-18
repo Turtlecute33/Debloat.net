@@ -15,6 +15,9 @@ on:
       - .dockerignore
       - .github/workflows/checks.cross-platform.yaml
 
+permissions:
+  contents: read # No job writes to the repository
+
 jobs:
   test-and-build:
     strategy:

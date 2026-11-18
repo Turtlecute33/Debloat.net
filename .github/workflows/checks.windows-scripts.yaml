@@ -13,6 +13,9 @@ on:
         required: false
         default: ''
 
+permissions:
+  contents: read # No job writes to the repository
+
 jobs:
   generate:
     runs-on: ubuntu-latest
