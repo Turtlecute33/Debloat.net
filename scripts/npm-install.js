@@ -79,7 +79,7 @@ async function main() {
 
 async function removeNodeModules(workingDirectory) {
   const nodeModulesDirectory = resolve(workingDirectory, 'node_modules');
-  if (await exists('./node_modules')) {
+  if (await exists(nodeModulesDirectory)) {
     console.log('Removing node_modules...');
     await rm(nodeModulesDirectory, { recursive: true });
   }
