@@ -359,15 +359,18 @@ actions:
               See also: [Steam Homepage](https://web.archive.org/web/20221029212925/https://store.steampowered.com/)
 
               [1]: https://web.archive.org/web/20221029135718/https://en.wikipedia.org/wiki/Steam_%28service%29 "Steam | Wikipedia | wikipedia.org"
-            code: |-
-              # Global installation
-              rm -rfv ~/.local/share/Steam/appcache/*
-              # Snap
-              rm -rfv ~/snap/steam/common/.cache/*
-              rm -rfv ~/snap/steam/common/.local/share/Steam/appcache/*
-              # Flatpak
-              rm -rfv ~/.var/app/com.valvesoftware.Steam/cache/*
-              rm -rfv ~/.var/app/com.valvesoftware.Steam/data/Steam/appcache/*
+            call:
+              function: RunAsTargetUser
+              parameters:
+                code: |-
+                  # Global installation
+                  run_as_target_user rm -rfv -- ~/.local/share/Steam/appcache/*
+                  # Snap
+                  run_as_target_user rm -rfv -- ~/snap/steam/common/.cache/*
+                  run_as_target_user rm -rfv -- ~/snap/steam/common/.local/share/Steam/appcache/*
+                  # Flatpak
+                  run_as_target_user rm -rfv -- ~/.var/app/com.valvesoftware.Steam/cache/*
+                  run_as_target_user rm -rfv -- ~/.var/app/com.valvesoftware.Steam/data/Steam/appcache/*
           -
             name: Clear Clementine cache
             docs: |-
@@ -380,13 +383,16 @@ actions:
               [1]: https://web.archive.org/web/20221029135732/https://en.wikipedia.org/wiki/Clementine_%28software%29 "Clementine | Wikipedia | wikipedia.org"
               [2]: https://web.archive.org/web/20221029135808/https://github.com/clementine-player/Clementine/blob/7e48b78c158116166348502fd1da5116a2a480bf/src/core/utilities.cpp#L365-L391 "Clementine cache source code | GitHub | github.com/clementine-player/Clementine"
               [3]: https://web.archive.org/web/20221029135834/https://github.com/clementine-player/Clementine/issues/3265 "Cache folder · Issue #3265 · clementine-player/Clementine | GitHub | github.com/clementine-player/Clementine"
-            code: |-
-              # Global installation
-              rm -rfv ~/.cache/Clementine/*
-              # Flatpak installation
-              rm -rfv ~/.var/app/org.clementine_player.Clementine/cache/*
-              # Snap installation
-              rm -rfv ~/snap/clementine/common/.cache/*
+            call:
+              function: RunAsTargetUser
+              parameters:
+                code: |-
+                  # Global installation
+                  run_as_target_user rm -rfv -- ~/.cache/Clementine/*
+                  # Flatpak installation
+                  run_as_target_user rm -rfv -- ~/.var/app/org.clementine_player.Clementine/cache/*
+                  # Snap installation
+                  run_as_target_user rm -rfv -- ~/snap/clementine/common/.cache/*
           -
             category: Clear Wine data
             docs: |-
@@ -407,11 +413,14 @@ actions:
                   [1]: https://web.archive.org/web/20180328090608/http://www.zdnet.com/article/keeping-temp-folders-clean/ "Keeping temp folders clean | ZDNet | zdnet.com"
                   [2]: https://web.archive.org/web/20221029135944/https://ubuntuforums.org/showthread.php?t=1006132 "Why does Wine have its own temp folders? | UbuntuForums | ubuntuforums.org"
                   [3]: https://web.archive.org/web/20221029135955/https://wiki.debian.org/Wine#Mono_and_Gecko "Wine - Debian Wiki | wiki.debian.org"
-                code: |-
-                  # Temporary Windows files for global prefix
-                  rm -rfv ~/.wine/drive_c/windows/temp/*
-                  # Wine cache:
-                  rm -rfv ~/.cache/wine/
+                call:
+                  function: RunAsTargetUser
+                  parameters:
+                    code: |-
+                      # Temporary Windows files for global prefix
+                      run_as_target_user rm -rfv -- ~/.wine/drive_c/windows/temp/*
+                      # Wine cache:
+                      run_as_target_user rm -rfv -- ~/.cache/wine/
               -
                 name: Clear Winetricks cache
                 docs: |-
@@ -427,7 +436,10 @@ actions:
                   [2]: https://web.archive.org/web/20221029140047/https://github.com/Winetricks/winetricks/blob/164d243e1384ba7cc6058a6524c1472100b7722c/src/winetricks#L1269-L1271 "Wine source code | GitHub | github.com/Winetricks/winetricks"
                   [3]: https://web.archive.org/web/20221029140047/https://github.com/Winetricks/winetricks/blob/164d243e1384ba7cc6058a6524c1472100b7722c/src/winetricks#L1515-L1517 "Wine source code | GitHub | github.com/Winetricks/winetricks"
                   [4]: https://web.archive.org/web/20221029140204/https://manpages.debian.org/experimental/winetricks/winetricks.1.en.html#XDG_CACHE_HOME "winetricks man page | Debian Manpages | manpages.debian.org"
-                code: rm -rfv ~/.cache/winetricks/
+                call:
+                  function: RunAsTargetUser
+                  parameters:
+                    code: run_as_target_user rm -rfv -- ~/.cache/winetricks/
           -
             name: Clear LibreOffice usage history
             docs: |-
@@ -446,13 +458,16 @@ actions:
               [2]: https://web.archive.org/web/20221029140313/https://wiki.documentfoundation.org/images/b/b0/LibreOffice_config_extension_writing.pdf "Config specification | LibreOffice documentation | wiki.documentfoundation.org"
               [3]: https://web.archive.org/web/20221029140438/https://askubuntu.com/questions/996397/where-are-libre-office-thumbnails-stored/996528 "Where are Libre Office thumbnails stored? | Ask Ubuntu Forums | askubuntu.com"
               [4]: https://web.archive.org/web/20221029140501/https://forum.openoffice.org/en/forum/viewtopic.php?f=6&t=102020 "Restoring Recent documents list | Apache OpenOffice Community Forum | forum.openoffice.org"
-            code: |-
-              # Global installation
-              rm -f ~/.config/libreoffice/4/user/registrymodifications.xcu
-              # Snap package
-              rm -fv ~/snap/libreoffice/*/.config/libreoffice/4/user/registrymodifications.xcu
-              # Flatpak installation
-              rm -fv ~/.var/app/org.libreoffice.LibreOffice/config/libreoffice/4/user/registrymodifications.xcu
+            call:
+              function: RunAsTargetUser
+              parameters:
+                code: |-
+                  # Global installation
+                  run_as_target_user rm -f -- ~/.config/libreoffice/4/user/registrymodifications.xcu
+                  # Snap package
+                  run_as_target_user rm -fv -- ~/snap/libreoffice/*/.config/libreoffice/4/user/registrymodifications.xcu
+                  # Flatpak installation
+                  run_as_target_user rm -fv -- ~/.var/app/org.libreoffice.LibreOffice/config/libreoffice/4/user/registrymodifications.xcu
           -
             category: Clear Thunderbird data
             docs: |-
@@ -672,17 +687,23 @@ actions:
                       The Azure CLI stores telemetry in the `telemetry` directory and `telemetry.txt`, `logs/telemetry.txt` files [1].
 
                       [1]: https://web.archive.org/web/20221029142939/https://github.com/Azure/azure-cli/blob/29767d75d850ddc1c24cc85bd46d861b61d77a47/src/azure-cli-telemetry/azure/cli/telemetry/const.py "Azure CLI Source Code | GitHub | github.com"
-                    code: |-
-                      rm -rfv ~/.azure/telemetry
-                      rm -fv ~/.azure/telemetry.txt
-                      rm -fv ~/.azure/logs/telemetry.txt
+                    call:
+                      function: RunAsTargetUser
+                      parameters:
+                        code: |-
+                          run_as_target_user rm -rfv -- ~/.azure/telemetry
+                          run_as_target_user rm -fv -- ~/.azure/telemetry.txt
+                          run_as_target_user rm -fv -- ~/.azure/logs/telemetry.txt
                   -
                     name: Clear Azure CLI logs
                     docs: |-
                       Azure CLI saves logs in the `logs` directory [1].
 
                       [1]: https://web.archive.org/web/20221029143112/https://github.com/Azure/azure-cli/blob/87c9c3c5a46de622b38e1ec4d5797bb9a3eb9e6f/src/azure/cli/_logging.py#L23 "Azure CLI Source Code | GitHub | github.com"
-                    code: rm -rfv ~/.azure/logs
+                    call:
+                      function: RunAsTargetUser
+                      parameters:
+                        code: run_as_target_user rm -rfv -- ~/.azure/logs
                   -
                     name: Clear Azure CLI cache
                     docs: |-
@@ -761,13 +782,16 @@ actions:
               -
                 name: Clear GNOME Web cache
                 docs: This script clears the temporary cache and does not cause any user data loss.
-                code: |-
-                  # Global installation
-                  rm -rfv ~/.cache/epiphany/*
-                  # Flatpak installation
-                  rm -rfv ~/.var/app/org.gnome.Epiphany/cache/*
-                  # Snap installation
-                  rm -rfv ~/snap/epiphany/common/.cache/*
+                call:
+                  function: RunAsTargetUser
+                  parameters:
+                    code: |-
+                      # Global installation
+                      run_as_target_user rm -rfv -- ~/.cache/epiphany/*
+                      # Flatpak installation
+                      run_as_target_user rm -rfv -- ~/.var/app/org.gnome.Epiphany/cache/*
+                      # Snap installation
+                      run_as_target_user rm -rfv -- ~/snap/epiphany/common/.cache/*
               -
                 name: Clear GNOME Web browsing history
                 docs: |-
@@ -839,13 +863,16 @@ actions:
 
                   [1]: https://web.archive.org/web/20221029145216/https://support.mozilla.org/en-US/questions/1317032 "How to locate and change Firefox Cache storage location | Firefox Support Forum | Mozilla Support | support.mozilla.org"
                   [2]: https://web.archive.org/web/20221029145237/https://wiki.archlinux.org/title/Firefox/Profile_on_RAM "Firefox/Profile on RAM | ArchWiki | wiki.archlinux.org"
-                code: |-
-                  # Global installation
-                  rm -rfv ~/.cache/mozilla/*
-                  # Flatpak installation
-                  rm -rfv ~/.var/app/org.mozilla.firefox/cache/*
-                  # Snap installation
-                  rm -rfv ~/snap/firefox/common/.cache/*
+                call:
+                  function: RunAsTargetUser
+                  parameters:
+                    code: |-
+                      # Global installation
+                      run_as_target_user rm -rfv -- ~/.cache/mozilla/*
+                      # Flatpak installation
+                      run_as_target_user rm -rfv -- ~/.var/app/org.mozilla.firefox/cache/*
+                      # Snap installation
+                      run_as_target_user rm -rfv -- ~/snap/firefox/common/.cache/*
               -
                 name: Clear Firefox crash reports
                 docs: |-
@@ -858,17 +885,17 @@ actions:
                   [2]: https://web.archive.org/web/20221029145312/https://bugzilla.mozilla.org/show_bug.cgi?id=1653852#c16 "1653852 - Flatpak sandbox breaks crash reporting | Bugzilla | mozilla.org"
                 call:
                   -
-                    function: RunInlineCode
+                    function: RunAsTargetUser
                     parameters:
                       code: |-
                         # Global installation
-                        rm -rfv ~/.mozilla/firefox/Crash\ Reports/*
+                        run_as_target_user rm -rfv -- ~/.mozilla/firefox/Crash\ Reports/*
                         # Global installation, Firefox 147 and later on a new installation (XDG Base Directory location)
-                        rm -rfv ~/.config/mozilla/firefox/Crash\ Reports/*
+                        run_as_target_user rm -rfv -- ~/.config/mozilla/firefox/Crash\ Reports/*
                         # Flatpak installation
-                        rm -rfv ~/.var/app/org.mozilla.firefox/.mozilla/firefox/Crash\ Reports/*
+                        run_as_target_user rm -rfv -- ~/.var/app/org.mozilla.firefox/.mozilla/firefox/Crash\ Reports/*
                         # Snap installation
-                        rm -rfv ~/snap/firefox/common/.mozilla/firefox/Crash\ Reports/*
+                        run_as_target_user rm -rfv -- ~/snap/firefox/common/.mozilla/firefox/Crash\ Reports/*
                   -
                     function: DeleteFilesFromFirefoxProfiles
                     parameters:
@@ -1425,14 +1452,17 @@ actions:
               [3]: https://web.archive.org/web/20221029151529/https://www.gnu.org/software/guile-gnome/docs/gtk/html/GtkRecentManager.html "GtkRecentManager - Guile-Gtk | www.gnu.org"
               [4]: https://web.archive.org/web/20221029151457/https://www.qt.io/faq/3.2.-why-do-you-have-an-agreement-with-kde-about-your-licensing-what-kde-is-and-whats-the-history-of-qt-and-kde "What's the history of Qt and KDE? | qt.io"
               [5]: https://web.archive.org/web/20221029151534/https://github.com/electron/electron/issues/2927 "Consider replacing GTK2 w GTK3 in Linux builds · Issue #2927 · electron/electron | GitHub"
-            code: |-
-              # From global installations
-              rm -fv ~/.recently-used.xbel
-              rm -fv ~/.local/share/recently-used.xbel*
-              # From snap packages
-              rm -fv ~/snap/*/*/.local/share/recently-used.xbel
-              # From Flatpak packages
-              rm -fv ~/.var/app/*/data/recently-used.xbel
+            call:
+              function: RunAsTargetUser
+              parameters:
+                code: |-
+                  # From global installations
+                  run_as_target_user rm -fv -- ~/.recently-used.xbel
+                  run_as_target_user rm -fv -- ~/.local/share/recently-used.xbel*
+                  # From snap packages
+                  run_as_target_user rm -fv -- ~/snap/*/*/.local/share/recently-used.xbel
+                  # From Flatpak packages
+                  run_as_target_user rm -fv -- ~/.var/app/*/data/recently-used.xbel
           -
             name: Clear KDE-tracked recently used items list
             docs: |-
@@ -1444,15 +1474,18 @@ actions:
               Furthermore, they are used by other [KDE apps](https://web.archive.org/web/20221029221245/https://apps.kde.org/) and can even be used by GTK applications [1].
 
               [1]: https://web.archive.org/web/20221029151634/https://api.kde.org/frameworks/kio/html/classKRecentDocument.html "KIO - KRecentDocument Class Reference | api.kde.org"
-            code: |-
-              # From global installations
-              rm -rfv ~/.local/share/RecentDocuments/*.desktop
-              rm -rfv ~/.kde/share/apps/RecentDocuments/*.desktop
-              rm -rfv ~/.kde4/share/apps/RecentDocuments/*.desktop
-              # From snap packages
-              rm -rfv ~/snap/*/*/.local/share/RecentDocuments/*.desktop
-              # From Flatpak packages
-              rm -rfv ~/.var/app/*/data/RecentDocuments/*.desktop
+            call:
+              function: RunAsTargetUser
+              parameters:
+                code: |-
+                  # From global installations
+                  run_as_target_user rm -rfv -- ~/.local/share/RecentDocuments/*.desktop
+                  run_as_target_user rm -rfv -- ~/.kde/share/apps/RecentDocuments/*.desktop
+                  run_as_target_user rm -rfv -- ~/.kde4/share/apps/RecentDocuments/*.desktop
+                  # From snap packages
+                  run_as_target_user rm -rfv -- ~/snap/*/*/.local/share/RecentDocuments/*.desktop
+                  # From Flatpak packages
+                  run_as_target_user rm -rfv -- ~/.var/app/*/data/RecentDocuments/*.desktop
           -
             name: Clear KDE activity history
             docs: |-
@@ -1509,14 +1542,17 @@ actions:
           [2]: https://web.archive.org/web/20221029151712/https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html "XDG Base Directory Specification | freedesktop.org"
           [3]: https://web.archive.org/web/20221029151919/https://docs.flatpak.org/en/latest/portal-api-reference.html#gdbus-org.freedesktop.portal.Trash "Portal API Reference - Flatpak documentation | docs.flatpak.org"
           [4]: https://web.archive.org/web/20221029151931/https://bugs.launchpad.net/snapd/+bug/1787903 "Bug #1787903 “Snapped application can't access user's trash can” : Bugs : snapd | bugs.launchpad.net"
-        code: |-
-          # Empty global trash
-          rm -rfv ~/.local/share/Trash/*
-          sudo rm -rfv /root/.local/share/Trash/*
-          # Empty Snap trash
-          rm -rfv ~/snap/*/*/.local/share/Trash/*
-          # Empty Flatpak trash (apps may not choose to use Portal API)
-          rm -rfv ~/.var/app/*/data/Trash/*
+        call:
+          function: RunAsTargetUser
+          parameters:
+            code: |-
+              # Empty global trash
+              run_as_target_user rm -rfv -- ~/.local/share/Trash/*
+              sudo rm -rfv /root/.local/share/Trash/*
+              # Empty Snap trash
+              run_as_target_user rm -rfv -- ~/snap/*/*/.local/share/Trash/*
+              # Empty Flatpak trash (apps may not choose to use Portal API)
+              run_as_target_user rm -rfv -- ~/.var/app/*/data/Trash/*
       -
         category: Clear package manager data
         docs: |-
@@ -1660,13 +1696,16 @@ actions:
 
                   [1]: https://web.archive.org/web/20221029153602/https://github.com/flatpak/flatpak/issues/1119 "Prevent /var/tmp/flatpak-cache from piling up · Issue #1119 · flatpak/flatpak | GitHub | github.com"
                   [2]: https://web.archive.org/web/20221029153627/https://github.com/flatpak/flatpak/commit/1a49029f9d8fbee0338665522cf7432ae7485841 "Move caches to ~/.cache · flatpak/flatpak@1a49029 · GitHub | github.com"
-                code: |-
-                  # Temporary cache
-                  sudo rm -rfv /var/tmp/flatpak-cache-*
-                  # New cache
-                  rm -rfv ~/.cache/flatpak/system-cache/*
-                  # Old cache
-                  rm -rfv ~/.local/share/flatpak/system-cache/*
+                call:
+                  function: RunAsTargetUser
+                  parameters:
+                    code: |-
+                      # Temporary cache
+                      sudo rm -rfv /var/tmp/flatpak-cache-*
+                      # New cache
+                      run_as_target_user rm -rfv -- ~/.cache/flatpak/system-cache/*
+                      # Old cache
+                      run_as_target_user rm -rfv -- ~/.local/share/flatpak/system-cache/*
           -
             category: Clear APT data
             docs: |-
@@ -1755,9 +1794,12 @@ actions:
               [2]: https://web.archive.org/web/20221029154505/https://wiki.archlinux.org/title/KDE#Clean_cache_to_resolve_upgrade_problems "KDE - ArchWiki | wiki.archlinux.org"
               [3]: https://web.archive.org/web/20221029154542/https://pip.pypa.io/en/stable/topics/caching/#default-paths "Caching - pip documentation v22.2.2 | pip.pypa.io"
               [4]: https://web.archive.org/web/20221029154556/https://chromium.googlesource.com/chromium/src/+/master/docs/user_data_dir.md#Linux "Chromium Docs - User Data Directory | chromium.googlesource.com"
-            code: |-
-              rm -rfv ~/.cache/*
-              sudo rm -rfv /root/.cache/*
+            call:
+              function: RunAsTargetUser
+              parameters:
+                code: |-
+                  run_as_target_user rm -rfv -- ~/.cache/*
+                  sudo rm -rfv /root/.cache/*
           -
             name: Clear Flatpak application cache
             docs: |-
@@ -1766,7 +1808,10 @@ actions:
 
               [1]: https://web.archive.org/web/20221029154654/https://docs.flatpak.org/en/latest/conventions.html#xdg-base-directories "Requirements & Conventions - Flatpak documentation | docs.flatpak.org"
               [2]: https://web.archive.org/web/20221029151712/https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html "XDG Base Directory Specification | specifications.freedesktop.org"
-            code: rm -rfv ~/.var/app/*/cache/*
+            call:
+              function: RunAsTargetUser
+              parameters:
+                code: run_as_target_user rm -rfv -- ~/.var/app/*/cache/*
           -
             name: Clear Snap application cache
             docs: |-
@@ -1774,7 +1819,10 @@ actions:
               folders for Snap applications [1].
 
               [1]: https://web.archive.org/web/20221029154850/https://bugs.launchpad.net/snappy/+bug/1744584 "Bug #1744584 “Exclude Snap .cache from Dejadup backups” : Bugs : Snappy | bugs.launchpad.net/snappy"
-            code: rm -rfv ~/snap/*/*/.cache/*
+            call:
+              function: RunAsTargetUser
+              parameters:
+                code: run_as_target_user rm -rfv -- ~/snap/*/*/.cache/*
           -
             name: Clear thumbnails (icon cache)
             docs: |-
@@ -1789,9 +1837,12 @@ actions:
               [2]: https://web.archive.org/web/20221029154933/https://wiki.archlinux.org/title/GNOME/Files#Thumbnails "GNOME/Files - ArchWiki | wiki.archlinux.org"
               [3]: https://web.archive.org/web/20221030163411/https://gitlab.gnome.org/GNOME/nautilus/-/issues/1237 "Unable to generate thumbnails (#1237) · Issues · GNOME / Files · GitLab | gitlab.gnome.org"
               [4]: https://web.archive.org/web/20221029155859/https://bugs.kde.org/show_bug.cgi?id=79943 "79943 - It should be possible to limit the amount of disk space used by thumbnails (.thumbnails directory) | bugs.kde.org"
-            code: |-
-              rm -rfv ~/.thumbnails/*
-              rm -rfv ~/.cache/thumbnails/*
+            call:
+              function: RunAsTargetUser
+              parameters:
+                code: |-
+                  run_as_target_user rm -rfv -- ~/.thumbnails/*
+                  run_as_target_user rm -rfv -- ~/.cache/thumbnails/*
       -
         name: Clear screenshots
         docs: |-

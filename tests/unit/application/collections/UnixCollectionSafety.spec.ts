@@ -417,6 +417,26 @@ describe('compiled Unix collection safety', () => {
       expect(script.docs.join('\n')).to.include('> **Caution:**');
     });
 
+    it('deletes files in the home folder as the invoking user', () => {
+      /*
+        As root, `rm` follows any folder in the path that the user replaced with a symbolic link.
+        With `~/.cache` linked to `/`, "Clear user-specific cache" (`rm -rfv ~/.cache/*`) deleted
+        system files.
+      */
+      const offenders = getScripts(OperatingSystem.Linux).flatMap((script) => (
+        getLines(`${script.code.execute}\n${script.code.revert ?? ''}`)
+          .filter((line) => !line.startsWith('#'))
+          .filter((line) => /\brm\b.*(?:~\/|\$HOME\b|\$target_home\b)/.test(line))
+          .filter((line) => !/\brun_as_target_user\b.*\brm\b/.test(line))
+          .map((line) => `${script.name}: ${line}`)
+      ));
+
+      expect(offenders).to.deep.equal([], formatAssertionMessage([
+        'A file in the home folder is deleted as root. Prefix `rm` with `run_as_target_user`:',
+        ...offenders,
+      ]));
+    });
+
     it('creates the Python history file as the invoking user and removes it on revert', () => {
       /*
         As root, `touch` created a root-owned `~/.python_history`. Revert only removed the immutable

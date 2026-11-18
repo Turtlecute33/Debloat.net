@@ -715,7 +715,7 @@ describe('compiled collection regressions', () => {
 
     it('clears user-owned paths rather than filesystem-root paths', () => {
       const offenders = getScripts(OperatingSystem.Linux)
-        .filter((script) => /rm -[rf]+v \/\.(cache|recently)/.test(script.code.execute))
+        .filter((script) => /rm -[rf]+v (?:-- )?\/\.(cache|recently)/.test(script.code.execute))
         .map((script) => script.name);
 
       expect(offenders).to.deep.equal([]);
