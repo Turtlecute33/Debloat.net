@@ -3789,9 +3789,13 @@ actions:
                         # it is non-essential and should be disabled. The information system should be configured to
                         # provide only essential capabilities. Disabling TFTP helps prevent the unauthorized connection
                         # of devices and the unauthorized transfer of information.
+                        # `tftp.plist` ships with `Disabled` set to true, so TFTP is off unless someone turned it on.
+                        # A plain `launchctl enable` on revert turned it on at the next restart.
                         docs: https://web.archive.org/web/20241125172446/https://www.stigviewer.com/stig/apple_macos_11_big_sur/2021-06-16/finding/V-230813
-                        code: sudo launchctl disable 'system/com.apple.tftpd'
-                        revertCode: sudo launchctl enable 'system/com.apple.tftpd'
+                        call:
+                            function: DisableLaunchDaemon
+                            parameters:
+                                label: com.apple.tftpd
                     -
                         name: Disable Bonjour multicast advertising
                         docs: https://web.archive.org/web/20241125192601/https://www.stigviewer.com/stig/apple_os_x_10.11/2017-04-06/finding/V-67593
