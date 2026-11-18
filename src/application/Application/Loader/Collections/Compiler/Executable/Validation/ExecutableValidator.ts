@@ -38,6 +38,11 @@ export class ContextualExecutableValidator implements ExecutableValidator {
       () => isString(nameValue),
       `Name (${JSON.stringify(nameValue)}) is not a string but ${typeof nameValue}.`,
     );
+    this.assert(
+      // Names must be one line: script names become comment and echo lines in generated code.
+      () => !/[\r\n]/.test(nameValue),
+      `Name (${JSON.stringify(nameValue)}) contains a line break.`,
+    );
   }
 
   public assertType(assert: AssertTypeFunction): void {

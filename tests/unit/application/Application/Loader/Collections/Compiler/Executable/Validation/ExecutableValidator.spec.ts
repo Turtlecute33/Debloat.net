@@ -38,6 +38,16 @@ describe('ContextualExecutableValidator', () => {
           invalidName: 33,
           expectedMessage: 'Name (33) is not a string but number.',
         },
+        {
+          description: 'line feed',
+          invalidName: 'name\nshutdown /s',
+          expectedMessage: 'Name ("name\\nshutdown /s") contains a line break.',
+        },
+        {
+          description: 'carriage return',
+          invalidName: 'name\rshutdown /s',
+          expectedMessage: 'Name ("name\\rshutdown /s") contains a line break.',
+        },
       ];
       testScenarios.forEach(({ description, invalidName, expectedMessage }) => {
         describe(`given "${description}"`, () => {
