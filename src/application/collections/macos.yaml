@@ -941,10 +941,14 @@ actions:
                                 name: Clear Firefox form history
                                 code: |-
                                     rm -fv ~/Library/Application\ Support/Firefox/Profiles/*/formhistory.sqlite
+                                    rm -fv ~/Library/Application\ Support/Firefox/Profiles/*/formhistory.sqlite-journal
                                     rm -fv ~/Library/Application\ Support/Firefox/Profiles/*/formhistory.dat
                             -
                                 name: Clear Firefox site preferences
-                                code: rm -fv ~/Library/Application\ Support/Firefox/Profiles/*/content-prefs.sqlite
+                                code: |-
+                                    rm -fv ~/Library/Application\ Support/Firefox/Profiles/*/content-prefs.sqlite
+                                    rm -fv ~/Library/Application\ Support/Firefox/Profiles/*/content-prefs.sqlite-wal
+                                    rm -fv ~/Library/Application\ Support/Firefox/Profiles/*/content-prefs.sqlite-shm
                             -
                                 name: Clear Firefox session restore data (loads after the browser closes or crashes)
                                 code: |-
@@ -976,7 +980,10 @@ actions:
                                     rm -fv ~/Library/Application\ Support/Firefox/Profiles/*/logins-backup.json
                             -
                                 name: Clear Firefox HTML5 cookies
-                                code: rm -fv ~/Library/Application\ Support/Firefox/Profiles/*/webappsstore.sqlite
+                                code: |-
+                                    rm -fv ~/Library/Application\ Support/Firefox/Profiles/*/webappsstore.sqlite
+                                    rm -fv ~/Library/Application\ Support/Firefox/Profiles/*/webappsstore.sqlite-wal
+                                    rm -fv ~/Library/Application\ Support/Firefox/Profiles/*/webappsstore.sqlite-shm
                             -
                                 name: Clear Firefox crash reports
                                 code: |-

@@ -785,15 +785,24 @@ actions:
                 docs: |-
                   `cookies.sqlite` file is used to store cookies in WebKit-based browsers [1].
 
+                  While SQLite changes this database, it keeps a rollback journal in `cookies.sqlite-journal`. If GNOME
+                  Web stops during a change, this file stays on disk [2]. This script deletes this file too.
+
                   See also:
                   - [What are cookies? | GNOME Web | gnome.org](https://web.archive.org/web/20221029214420/https://help.gnome.org/users/epiphany/stable/cookies.html.en)
                   - [Delete a cookie | GNOME Web | gnome.org](https://web.archive.org/web/20221029214415/https://gitlab.gnome.org/GNOME/epiphany)
 
                   [1]: https://web.archive.org/web/20221029144608/https://bugs.webkit.org/show_bug.cgi?id=149551 "Discussion around cookies.sqlite in WebKit source code | WebKit Bugzilla | bugs.webkit.org"
+                  [2]: https://web.archive.org/web/20261105084918/https://www.sqlite.org/tempfiles.html "Temporary Files Used By SQLite | sqlite.org"
                 call:
+                  -
                     function: DeleteFileFromGNOMEWebData
                     parameters:
                       file: cookies.sqlite
+                  -
+                    function: DeleteFileFromGNOMEWebData
+                    parameters:
+                      file: cookies.sqlite-journal
               -
                 name: Clear GNOME Web bookmarks
                 docs: |-
@@ -863,11 +872,27 @@ actions:
                 docs: |-
                   Firefox Cookies are stored in the `cookies.sqlite` database, within the 'moz_cookies' table [1].
 
+                  Firefox uses the write-ahead log (WAL) mode of SQLite for this database [2]. In this mode, SQLite adds
+                  changes to `cookies.sqlite-wal` before it copies them into `cookies.sqlite`, and keeps an index in
+                  `cookies.sqlite-shm` [3]. These files can stay on disk after Firefox closes [3]. This script deletes
+                  these files too.
+
                   [1]: https://web.archive.org/web/20221029140816/https://kb.mozillazine.org/Cookies.sqlite "Cookies.sqlite - MozillaZine Knowledge Base | kb.mozillazine.org"
+                  [2]: https://web.archive.org/web/20250421214213/https://searchfox.org/mozilla-central/source/netwerk/cookie/CookiePersistentStorage.cpp "CookiePersistentStorage.cpp - mozsearch | searchfox.org"
+                  [3]: https://web.archive.org/web/20261117123419/https://sqlite.org/wal.html "Write-Ahead Logging | sqlite.org"
                 call:
-                  function: DeleteFilesFromFirefoxProfiles
-                  parameters:
-                    pathGlob: cookies.sqlite
+                  -
+                    function: DeleteFilesFromFirefoxProfiles
+                    parameters:
+                      pathGlob: cookies.sqlite
+                  -
+                    function: DeleteFilesFromFirefoxProfiles
+                    parameters:
+                      pathGlob: cookies.sqlite-wal
+                  -
+                    function: DeleteFilesFromFirefoxProfiles
+                    parameters:
+                      pathGlob: cookies.sqlite-shm
               -
                 name: Delete Firefox browsing history, bookmarks, and download history
                 # This script (name, documentation and code) is same in Linux and Windows collections.
@@ -894,6 +919,10 @@ actions:
 
                   **Favicons**: Older Firefox versions stored favicons in `places.sqlite` within the `moz_favicons` table [5], while newer versions use `favicons.sqlite` and the `moz_icons` table [5].
 
+                  **Write-ahead logs**: Firefox uses the write-ahead log (WAL) mode of SQLite for `places.sqlite` and `favicons.sqlite` [8]. In this mode, SQLite adds changes to a `-wal` file
+                  (`places.sqlite-wal`, `favicons.sqlite-wal`) before it copies them into the database, and keeps an index in a `-shm` file [9]. These files can stay on disk after Firefox closes [9].
+                  This script deletes these files too.
+
                   By executing this script, users can ensure their Firefox browsing history, bookmarks, and downloads are thoroughly removed, contributing to a cleaner and more private browsing experience.
 
                   [1]: https://web.archive.org/web/20221029141626/https://kb.mozillazine.org/Places.sqlite "Places.sqlite - MozillaZine Knowledge Base | kb.mozillazine.org"
@@ -903,6 +932,8 @@ actions:
                   [5]: https://web.archive.org/web/20221029145535/https://www.foxtonforensics.com/browser-history-examiner/firefox-history-location "Mozilla Firefox History Location | Firefox History Viewer | foxtonforensics.com"
                   [6]: https://web.archive.org/web/20221029145550/https://support.mozilla.org/en-US/questions/1319253 "Where does Firefox store SQLITE download history | Firefox Support Forum | Mozilla Support | support.mozilla.org"
                   [7]: https://web.archive.org/web/20221029145712/https://kb.mozillazine.org/Downloads.rdf "Downloads.rdf | MozillaZine Knowledge Base | kb.mozillazine.org"
+                  [8]: https://web.archive.org/web/20250115053338/https://searchfox.org/mozilla-central/source/toolkit/components/places/Database.cpp "Database.cpp - mozsearch | searchfox.org"
+                  [9]: https://web.archive.org/web/20261117123419/https://sqlite.org/wal.html "Write-Ahead Logging | sqlite.org"
                 call:
                   -
                     function: DeleteFilesFromFirefoxProfiles
@@ -919,7 +950,23 @@ actions:
                   -
                     function: DeleteFilesFromFirefoxProfiles
                     parameters:
+                      pathGlob: places.sqlite-wal
+                  -
+                    function: DeleteFilesFromFirefoxProfiles
+                    parameters:
+                      pathGlob: places.sqlite-shm
+                  -
+                    function: DeleteFilesFromFirefoxProfiles
+                    parameters:
                       pathGlob: favicons.sqlite
+                  -
+                    function: DeleteFilesFromFirefoxProfiles
+                    parameters:
+                      pathGlob: favicons.sqlite-wal
+                  -
+                    function: DeleteFilesFromFirefoxProfiles
+                    parameters:
+                      pathGlob: favicons.sqlite-shm
               -
                 name: Clear Firefox logins
                 docs: |-
@@ -953,11 +1000,20 @@ actions:
                   The `formhistory.sqlite` file remembers what you have searched for in the Firefox search bar
                   and what information you've entered into website forms [1].
 
+                  While SQLite changes this database, it keeps a rollback journal in `formhistory.sqlite-journal`. If
+                  Firefox stops during a change, this file stays on disk [2]. This script deletes this file too.
+
                   [1]: https://web.archive.org/web/20221029145152/https://support.mozilla.org/en-US/kb/profiles-where-firefox-stores-user-data "Profiles - Where Firefox stores your bookmarks, passwords and other user data | Firefox Help | support.mozilla.org"
+                  [2]: https://web.archive.org/web/20261105084918/https://www.sqlite.org/tempfiles.html "Temporary Files Used By SQLite | sqlite.org"
                 call:
-                  function: DeleteFilesFromFirefoxProfiles
-                  parameters:
-                    pathGlob: formhistory.sqlite
+                  -
+                    function: DeleteFilesFromFirefoxProfiles
+                    parameters:
+                      pathGlob: formhistory.sqlite
+                  -
+                    function: DeleteFilesFromFirefoxProfiles
+                    parameters:
+                      pathGlob: formhistory.sqlite-journal
               -
                 name: Clear Firefox "Multi-Account Containers" data
                 docs: |-

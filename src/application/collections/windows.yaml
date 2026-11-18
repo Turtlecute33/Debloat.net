@@ -1595,6 +1595,10 @@ actions:
 
                                     **Favicons**: Older Firefox versions stored favicons in `places.sqlite` within the `moz_favicons` table [5], while newer versions use `favicons.sqlite` and the `moz_icons` table [5].
 
+                                    **Write-ahead logs**: Firefox uses the write-ahead log (WAL) mode of SQLite for `places.sqlite` and `favicons.sqlite` [8]. In this mode, SQLite adds changes to a `-wal` file
+                                    (`places.sqlite-wal`, `favicons.sqlite-wal`) before it copies them into the database, and keeps an index in a `-shm` file [9]. These files can stay on disk after Firefox closes [9].
+                                    This script deletes these files too.
+
                                     By executing this script, users can ensure their Firefox browsing history, bookmarks, and downloads are thoroughly removed, contributing to a cleaner and more private browsing experience.
 
                                     [1]: https://web.archive.org/web/20221029141626/https://kb.mozillazine.org/Places.sqlite "Places.sqlite - MozillaZine Knowledge Base | kb.mozillazine.org"
@@ -1604,6 +1608,8 @@ actions:
                                     [5]: https://web.archive.org/web/20221029145535/https://www.foxtonforensics.com/browser-history-examiner/firefox-history-location "Mozilla Firefox History Location | Firefox History Viewer | foxtonforensics.com"
                                     [6]: https://web.archive.org/web/20221029145550/https://support.mozilla.org/en-US/questions/1319253 "Where does Firefox store SQLITE download history | Firefox Support Forum | Mozilla Support | support.mozilla.org"
                                     [7]: https://web.archive.org/web/20221029145712/https://kb.mozillazine.org/Downloads.rdf "Downloads.rdf | MozillaZine Knowledge Base | kb.mozillazine.org"
+                                    [8]: https://web.archive.org/web/20250115053338/https://searchfox.org/mozilla-central/source/toolkit/components/places/Database.cpp "Database.cpp - mozsearch | searchfox.org"
+                                    [9]: https://web.archive.org/web/20261117123419/https://sqlite.org/wal.html "Write-Ahead Logging | sqlite.org"
                                 call:
                                     -
                                         function: DeleteFilesFromFirefoxProfiles
@@ -1620,7 +1626,23 @@ actions:
                                     -
                                         function: DeleteFilesFromFirefoxProfiles
                                         parameters:
+                                            pathGlob: places.sqlite-wal
+                                    -
+                                        function: DeleteFilesFromFirefoxProfiles
+                                        parameters:
+                                            pathGlob: places.sqlite-shm
+                                    -
+                                        function: DeleteFilesFromFirefoxProfiles
+                                        parameters:
                                             pathGlob: favicons.sqlite
+                                    -
+                                        function: DeleteFilesFromFirefoxProfiles
+                                        parameters:
+                                            pathGlob: favicons.sqlite-wal
+                                    -
+                                        function: DeleteFilesFromFirefoxProfiles
+                                        parameters:
+                                            pathGlob: favicons.sqlite-shm
                             -
                                 name: Clear all Firefox user information and preferences
                                 docs: |-
