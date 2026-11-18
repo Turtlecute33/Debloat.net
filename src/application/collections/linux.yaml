@@ -691,10 +691,16 @@ actions:
 
                       [1]: https://web.archive.org/web/20221029143238/https://learn.microsoft.com/en-us/cli/azure/cache?view=azure-cli-latest#az_cache_purge "az cache | Microsoft Learn | learn.microsoft.com"
                     call:
-                      function: RunIfCommandExists
+                      function: RunAsTargetUser
                       parameters:
-                        command: az
-                        code: az cache purge
+                        # As root, `az` writes root-owned files to `~/.azure`, which the user's own `az`
+                        # then cannot update. `sudo` resets `PATH`, so `az` runs by the path found here.
+                        code: |-
+                          if ! azure_cli="$(command -v az)"; then
+                            echo 'Skipping because "az" is not found.'
+                          else
+                            run_as_target_user "$azure_cli" cache purge
+                          fi
                   -
                     name: Clear Azure login data (this will log you out of the current session)
                     docs: |-
@@ -717,13 +723,17 @@ actions:
                       [3]: https://web.archive.org/web/20221029143409/https://github.com/Azure/azure-cli/blob/2e0a42f304f5fd543818a98a9eab2faf8d1fd6d6/src/azure-cli/azure/cli/command_modules/profile/custom.py#L215-L224 "Azure CLI source code | GitHub | github.com"
                       [4]: https://web.archive.org/web/20221029143429/https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow "Microsoft identity platform and OAuth 2.0 authorization code flow - Microsoft Entra | Microsoft Learn | learn.microsoft.com"
                     call:
-                      function: RunIfCommandExists
+                      function: RunAsTargetUser
                       parameters:
-                        command: az
+                        # Runs as the user for the same reason as "Clear Azure CLI cache".
                         code: |-
-                          az logout &> /dev/null
-                          az account clear
-                          rm -fv ~/.azure/accessTokens.json
+                          if ! azure_cli="$(command -v az)"; then
+                            echo 'Skipping because "az" is not found.'
+                          else
+                            run_as_target_user "$azure_cli" logout &> /dev/null
+                            run_as_target_user "$azure_cli" account clear
+                            run_as_target_user rm -fv -- "$HOME/.azure/accessTokens.json"
+                          fi
       -
         category: Clear browser history
         docs: |-
