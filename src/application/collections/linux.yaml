@@ -5670,9 +5670,15 @@ functions:
           codeComment: >-
             Delete files matching pattern: "{{ $fileGlob }}"
       -
-        function: RunPython3Code
+        function: RunAsTargetUser
         parameters:
+          # Python runs as the user: as root, `os.remove` on a path in the home folder follows any folder
+          # on the way that the user replaced with a symbolic link, so it could delete a file outside it.
           code: |-
+            if ! command -v python3 > /dev/null 2>&1; then
+              echo 'Skipping because "python3" is not found.'
+            else
+              run_as_target_user python3 <<'EOF'
             import glob
             import os
             path = '{{ $fileGlob }}'
@@ -5690,6 +5696,8 @@ functions:
               deleted_count += 1
               print(f'Successfully delete file: "{path}".')
             print(f'Successfully deleted {deleted_count} file(s).')
+            EOF
+            fi
   -
     name: DeleteFilesFromFirefoxProfiles
     parameters:
