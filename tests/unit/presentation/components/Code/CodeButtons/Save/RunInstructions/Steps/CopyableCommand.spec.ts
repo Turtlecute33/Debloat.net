@@ -26,6 +26,17 @@ describe('CopyableCommand.vue', () => {
     // assert
     expect(actualContent).to.equal(expectedSlotContent);
   });
+  it('gives the copy button an accessible name', () => {
+    // arrange
+    const expectedName = 'Copy';
+
+    // act
+    const wrapper = mountComponent();
+
+    // assert
+    const copyButton = wrapper.findComponent(FlatButton);
+    expect(copyButton.attributes('aria-label')).to.equal(expectedName);
+  });
   describe('copy', () => {
     it('calls copyText when the copy button is clicked', async () => {
       // arrange

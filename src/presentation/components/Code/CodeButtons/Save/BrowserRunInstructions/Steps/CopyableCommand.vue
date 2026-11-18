@@ -4,7 +4,11 @@
     <span ref="copyableTextHolder"><slot /></span>
     <span class="copy-action-container">
       <TooltipWrapper>
-        <FlatButton icon="copy" @click="copyCode" />
+        <FlatButton
+          icon="copy"
+          aria-label="Copy"
+          @click="copyCode"
+        />
         <template #tooltip>
           Copy
         </template>
