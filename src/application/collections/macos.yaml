@@ -29,7 +29,7 @@ scripting:
     endCode: |-
         echo 'Your privacy and security is now hardened 🎉💪'
         echo 'Press any key to exit.'
-        read -n 1 -s
+        read -n 1 -s || true # Without a terminal there is no key to read; the script still finished
 actions:
     -
         category: Privacy cleanup
