@@ -5826,8 +5826,12 @@ actions:
                                             By disabling this policy, the script helps to enhance the privacy of your device by preventing the processing of its diagnostic data by Microsoft. This means
                                             that information about the usage and performance of your device will not be sent to Microsoft's Desktop Analytics service [1][2].
 
+                                            Microsoft documents this policy as deprecated: it works only on Windows 10 version 1809, and setting it has no effect on
+                                            other supported versions of Windows [3].
+
                                             [1]: https://web.archive.org/web/20220903042236/https://docs.microsoft.com/en-US/windows/client-management/mdm/policy-csp-system#system-allowdesktopanalyticsprocessing "Policy CSP - System - Windows Client Management | Microsoft Docs"
                                             [2]: https://web.archive.org/web/20211127031547/https://admx.help/?Category=Windows_10_2016&Policy=Microsoft.Policies.DataCollection::AllowDesktopAnalyticsProcessing "Allow Desktop Analytics Processing | admx.help"
+                                            [3]: https://web.archive.org/web/20251204232520/https://learn.microsoft.com/en-us/windows/client-management/mdm/policy-csp-system#allowdesktopanalyticsprocessing "System Policy CSP | Microsoft Learn | learn.microsoft.com"
                                         call:
                                             function: SetRegistryValue
                                             parameters:
@@ -5905,9 +5909,13 @@ actions:
                                             available. However, your device will gain an added layer of privacy as diagnostic data will not be processed by the
                                             business cloud [1].
 
+                                            Microsoft documents this policy as deprecated: it works only on Windows 10 version 1809, and setting it has no effect on
+                                            other supported versions of Windows [4].
+
                                             [1]: https://web.archive.org/web/20220903042236/https://docs.microsoft.com/en-US/windows/client-management/mdm/policy-csp-system#system-allowwufbcloudprocessing "Policy CSP - System - Windows Client Management | Microsoft Docs"
                                             [2]: https://web.archive.org/web/20210307173837/https://admx.help/?Category=Windows_10_2016&Policy=Microsoft.Policies.DataCollection::AllowWUfBCloudProcessing "Allow WUfB Cloud Processing | admx.help"
                                             [3]: https://archive.ph/2024.12.02-094527/https://techcommunity.microsoft.com/blog/coreinfrastructureandsecurityblog/update-management-for-windows-on-a-windows-365-cloud-pc/3452703 "Update Management for Windows on a Windows 365 Cloud PC | Microsoft Community Hub | techcommunity.microsoft.com"
+                                            [4]: https://web.archive.org/web/20251204232520/https://learn.microsoft.com/en-us/windows/client-management/mdm/policy-csp-system#allowwufbcloudprocessing "System Policy CSP | Microsoft Learn | learn.microsoft.com"
                                         call:
                                             function: SetRegistryValue
                                             parameters:
@@ -5918,7 +5926,6 @@ actions:
                                                 deleteOnRevert: 'true' # Missing by default since Windows 10 Pro (≥ 22H2) and Windows 11 Pro (≥ 23H2)
                                     -
                                         name: Disable Update Compliance processing of diagnostics data
-                                        recommend: standard
                                         docs: |-
                                             Update Compliance is a service provided by Microsoft hosted in Azure, which uses Windows diagnostic data [1].
                                             This service doesn't meet the US Government community compliance (GCC) requirements [1], and is utilized by
@@ -5939,8 +5946,12 @@ actions:
                                             `HKLM\SOFTWARE\Policies\Microsoft\Windows\DataCollection` registry path to 0, which disables the processing of
                                             diagnostic data by Update Compliance [2].
 
+                                            Microsoft documents this policy as deprecated: it works only on Windows 10 version 1809, and setting it has no effect on
+                                            other supported versions of Windows [3].
+
                                             [1]: https://web.archive.org/web/20220703201221/https://docs.microsoft.com/en-us/windows/deployment/update/update-compliance-get-started "Get started with Update Compliance - Windows Deployment | Microsoft Docs"
                                             [2]: https://web.archive.org/web/20220610123725/https://admx.help/?Category=Windows_10_2016&Policy=Microsoft.Policies.DataCollection::AllowUpdateComplianceProcessing "Allow Update Compliance Processing"
+                                            [3]: https://web.archive.org/web/20251204232520/https://learn.microsoft.com/en-us/windows/client-management/mdm/policy-csp-system#allowupdatecomplianceprocessing "System Policy CSP | Microsoft Learn | learn.microsoft.com"
                                         call:
                                             function: SetRegistryValue
                                             parameters:
@@ -5951,14 +5962,16 @@ actions:
                                                 deleteOnRevert: 'true' # Missing by default since Windows 10 Pro (≥ 22H2) and Windows 11 Pro (≥ 23H2)
                             -
                                 name: Disable commercial usage of collected data
-                                recommend: standard
                                 docs: |-
-                                    This protects your privacy by placing a limit on the commercial usage of your data. It manages
-                                    how Windows diagnostic data is handled by controlling whether Microsoft is a processor or controller
-                                    for Windows diagnostic data collected from your device [1] [2].
+                                    This script sets the *Allow commercial data pipeline* policy to disabled (`0`). The policy controls whether
+                                    Microsoft is a processor or controller for Windows diagnostic data collected from your device [1] [2].
 
-                                    In the default setting, Microsoft operates as the controller of this diagnostic data, thus enabling it to use the data
-                                    for commercial purposes. This script alters that setting to limit the commercial usage of your data [1] [2].
+                                    Disabled is the default: Microsoft stays the controller of this diagnostic data and processes it in accordance with
+                                    its privacy statement [1] [2]. It is enabling the policy, on a Microsoft Entra joined device, that makes
+                                    Microsoft a processor [1]. So this script does not limit how Microsoft uses your data.
+
+                                    Microsoft documents this policy as deprecated: it works only on Windows 10 version 1809, and setting it has no effect on
+                                    other supported versions of Windows [3].
 
                                     This script does not affect the operation of optional analytics processor services like Desktop Analytics and
                                     Windows Update for Business reports. Moreover, it doesn't change whether diagnostic data is collected or the ability
@@ -5966,6 +5979,7 @@ actions:
 
                                     [1]: https://web.archive.org/web/20230803142206/https://learn.microsoft.com/en-us/windows/client-management/mdm/policy-csp-system#allowcommercialdatapipeline "System Policy CSP - Windows Client Management | Microsoft Learn"
                                     [2]: https://web.archive.org/web/20230330140620/https://admx.help/?Category=Windows_10_2016&Policy=Microsoft.Policies.DataCollection::AllowCommercialDataPipeline "Allow commercial data pipeline"
+                                    [3]: https://web.archive.org/web/20251204232520/https://learn.microsoft.com/en-us/windows/client-management/mdm/policy-csp-system#allowcommercialdatapipeline "System Policy CSP | Microsoft Learn | learn.microsoft.com"
                                 call:
                                     function: SetRegistryValue
                                     parameters:
