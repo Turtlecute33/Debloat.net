@@ -6207,7 +6207,8 @@ functions:
     #   hard-coded "default" therefore risks leaving the system *less* hardened than it was before this
     #   script ran. Instead, the value found before the change is recorded as a comment in the same drop-in
     #   file and restored on revert. When no recorded value is available, the running value is deliberately
-    #   left alone rather than guessed at.
+    #   left alone rather than guessed at. It is also left alone when it is no longer the value this script
+    #   applied, so revert does not lower a value that something else made stricter later.
     # ❗️ Why `keepStricterValue` exists:
     #   For restriction levels such as `kernel.kptr_restrict` and `kernel.yama.ptrace_scope`, a higher number
     #   is stricter. Hardened systems run `kptr_restrict=2` or `ptrace_scope=2`/`3`, and writing `1` there
@@ -6275,6 +6276,7 @@ functions:
       fi
     revertCode: |-
       kernel_key='{{ $key }}'
+      kernel_value='{{ $value }}'
       kernel_revert_needs_restart='{{ with $revertNeedsRestart }}true{{ end }}'
       config_file='/etc/sysctl.d/60-privacy-sexy.conf'
       previous_marker="# privacy.sexy-previous:$kernel_key="
@@ -6307,6 +6309,10 @@ functions:
         fi
       elif ! command -v sysctl > /dev/null 2>&1; then
         >&2 echo 'Cannot restore the kernel parameter because "sysctl" is not found.'
+      elif running_value="$(sysctl --values "$kernel_key" 2>/dev/null | head --lines=1)" \
+          && [ "$running_value" != "$kernel_value" ]; then
+        # Something changed the value after privacy.sexy applied it, possibly to a stricter one.
+        >&2 echo "Skipping, \"$kernel_key\" is now \"$running_value\" instead of \"$kernel_value\", so the running value is left unchanged."
       elif sudo sysctl --write "$kernel_key=$previous_value" > /dev/null 2>&1; then
         echo "Successfully restored \"$kernel_key\" to its previous value \"$previous_value\"."
       else
