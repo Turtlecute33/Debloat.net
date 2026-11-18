@@ -9748,7 +9748,7 @@ actions:
                                 settingName: update.showReleaseNotes
                                 powerShellValueExpression: $false
                     -
-                        name: Automatically check extensions from Microsoft online service
+                        name: Disable Visual Studio Code automatic extension update checks
                         call:
                             function: SetVsCodeSetting
                             parameters:
