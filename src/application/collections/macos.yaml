@@ -872,6 +872,12 @@ actions:
                                 code: rm -f ~/Library/Safari/LastSession.plist
                             -
                                 category: Clear Safari caches
+                                docs: |-
+                                    > **Note:** Safari keeps its cache database inside a protected app container. macOS only allows
+                                    > other programs to change it when they have **Full Disk Access**. If you run
+                                    > *Clear Safari cached blobs, URLs and timestamps* without granting Full Disk Access to your
+                                    > terminal application, it reports a failure and does not delete the cache database.
+                                    > You can grant it in System Settings under Privacy & Security.
                                 children:
                                     -
                                         name: Clear Safari cached blobs, URLs and timestamps
@@ -887,8 +893,8 @@ actions:
 
                                             [1]: https://web.archive.org/web/20250313121423/https://davidkoepi.wordpress.com/2013/04/20/safariforensic/ "Safari Forensic | davidkoepi.wordpress.com"
                                         code: |-
-                                            rm -fv "$HOME/Library/Containers/com.apple.Safari/Data/Library/Caches/com.apple.Safari/Cache.db"* &>/dev/null
-                                            rm -fv "$HOME/Library/Caches/com.apple.Safari/Cache.db"* &>/dev/null
+                                            rm -fv "$HOME/Library/Containers/com.apple.Safari/Data/Library/Caches/com.apple.Safari/Cache.db"* >/dev/null
+                                            rm -fv "$HOME/Library/Caches/com.apple.Safari/Cache.db"* >/dev/null
                                     -
                                         name: Clear Safari URL bar web page icons
                                         docs:
@@ -1180,10 +1186,15 @@ actions:
                                     fi
             -
                 category: Clear iOS usage data
+                docs: |-
+                    > **Note:** macOS protects the folder that keeps iOS device backups. macOS only allows other
+                    > programs to change it when they have **Full Disk Access**. If you run *Clear iOS Device Backups*
+                    > without granting Full Disk Access to your terminal application, it reports a failure and
+                    > deletes nothing. You can grant it in System Settings under Privacy & Security.
                 children:
                     -
                         name: Clear iOS Device Backups
-                        code: rm -rfv ~/Library/Application\ Support/MobileSync/Backup/* &>/dev/null
+                        code: rm -rfv ~/Library/Application\ Support/MobileSync/Backup/* >/dev/null
                     -
                         name: Clear iOS simulators
                         code: |-
