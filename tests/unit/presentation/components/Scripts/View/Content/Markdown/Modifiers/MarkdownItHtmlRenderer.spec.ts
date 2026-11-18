@@ -70,6 +70,52 @@ describe('MarkdownItHtmlRenderer', () => {
       const totalBrElements = html.getElementsByTagName('br').length;
       expect(totalBrElements).to.equal(0);
     });
+    describe('raw HTML', () => {
+      it('keeps superscript tags', () => {
+        // arrange
+        const markdown = 'Text<sup>1</sup>';
+        // act
+        const renderedOutput = renderMarkdownUsingRenderer(MarkdownItHtmlRenderer, markdown);
+        // assert
+        const html = parseHtml(renderedOutput);
+        expect(html.getElementsByTagName('sup')).to.have.lengthOf(1);
+      });
+      const testScenarios: ReadonlyArray<{
+        readonly description: string;
+        readonly markdown: string;
+        readonly forbiddenTagName: string;
+      }> = [
+        {
+          description: 'inline tag with an event handler',
+          markdown: 'Name <img src=x onerror="alert(1)">',
+          forbiddenTagName: 'img',
+        },
+        {
+          description: 'block of HTML',
+          markdown: '<script>alert(1)</script>',
+          forbiddenTagName: 'script',
+        },
+        {
+          description: 'tag inside a link label',
+          markdown: '[<svg onload="alert(1)">](https://example.com)',
+          forbiddenTagName: 'svg',
+        },
+      ];
+      testScenarios.forEach(({ description, markdown, forbiddenTagName }) => {
+        it(`shows ${description} as text`, () => {
+          // act
+          const renderedOutput = renderMarkdownUsingRenderer(MarkdownItHtmlRenderer, markdown);
+          // assert
+          const html = parseHtml(renderedOutput);
+          const forbiddenElements = html.getElementsByTagName(forbiddenTagName);
+          expect(forbiddenElements).to.have.lengthOf(0, formatAssertionMessage([
+            `Markdown input to render: ${markdown}`,
+            `Actual render output: ${renderedOutput}`,
+          ]));
+          expect(html.body.textContent).to.include(`<${forbiddenTagName}`);
+        });
+      });
+    });
   });
 });
 

@@ -29,8 +29,26 @@ function createMarkdownParser(): MarkdownIt {
     breaks: false, // Disables conversion of single newlines (`\n`) to HTML breaks (`<br>`).
   });
   configureLinksToOpenInNewTab(markdownParser);
+  escapeRawHtmlExceptSuperscripts(markdownParser);
   return markdownParser;
 }
+
+/*
+  `html: true` is only needed for the `<sup>` tags that
+  `InlineReferenceLabelsToSuperscriptConverter` inserts. Any other raw HTML, such as a tag in
+  collection text or in a decoded URL label, is shown as text: the output is inserted with
+  `v-html`, so passing it through would make it live markup.
+*/
+function escapeRawHtmlExceptSuperscripts(markdownParser: MarkdownIt): void {
+  const { escapeHtml } = markdownParser.utils;
+  markdownParser.renderer.rules.html_inline = (tokens, index) => {
+    const { content } = tokens[index];
+    return AllowedRawHtmlTags.has(content) ? content : escapeHtml(content);
+  };
+  markdownParser.renderer.rules.html_block = (tokens, index) => escapeHtml(tokens[index].content);
+}
+
+const AllowedRawHtmlTags: ReadonlySet<string> = new Set(['<sup>', '</sup>']);
 
 function configureLinksToOpenInNewTab(markdownParser: MarkdownIt): void {
   // https://github.com/markdown-it/markdown-it/blob/14.0.0/docs/architecture.md#renderer
