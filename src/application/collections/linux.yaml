@@ -9,12 +9,13 @@ scripting:
     startCode: |-
       #!/usr/bin/env bash
       # {{ $homepage }} v{{ $version }} ({{ $date }})
+      if ! command -v sudo >/dev/null 2>&1; then
+        # Also when already root: the scripts below run their commands through sudo.
+        echo 'Administrator privileges are required, but sudo is unavailable.' >&2
+        exit 1
+      fi
       if [ "$EUID" -ne 0 ]; then
         script_path=$([[ "$0" = /* ]] && echo "$0" || echo "$PWD/${0#./}")
-        if ! command -v sudo >/dev/null 2>&1; then
-          echo 'Administrator privileges are required, but sudo is unavailable.' >&2
-          exit 1
-        fi
         sudo -- /usr/bin/env bash "$script_path" || {
           echo 'Failed to relaunch the script with administrator privileges.' >&2
           exit 1
