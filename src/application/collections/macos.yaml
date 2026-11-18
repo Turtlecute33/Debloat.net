@@ -1823,11 +1823,20 @@ actions:
                                 docs: |-
                                     This script sets the Firefox preference `media.peerconnection.ice.default_address_only` to `true` [1].
 
-                                    WebRTC lets web pages make audio and video calls directly between browsers [2]. Websites can use it,
-                                    through JavaScript, to read the IP address of your device on your local network [1].
+                                    WebRTC lets web pages make audio and video calls directly between browsers [2].
 
-                                    [1]: https://web.archive.org/web/20221025162743/https://wiki.archlinux.org/title/Firefox/Privacy#WebRTC_exposes_LAN_IP_address "WebRTC exposes LAN IP address | Firefox/Privacy - ArchWiki | wiki.archlinux.org"
+                                    To connect, WebRTC gives the page ICE candidates, which contain IP addresses of your device [3].
+                                    Unless a page uses, or has permission to use, your camera or microphone, Firefox already gathers
+                                    candidates only from the network interface of the default route, and hides your local IP address
+                                    behind a random `.local` (mDNS) name [4]. This preference applies the same interface limit to pages
+                                    that have this access, so they do not get the addresses of your other network interfaces [1] [4].
+                                    These pages still get the local IP address of the default interface. The preference
+                                    `media.peerconnection.ice.no_host` hides it from them as well, but it often breaks video calls [1].
+
+                                    [1]: https://web.archive.org/web/20261025104839/https://github.com/arkenfox/user.js/blob/master/user.js "arkenfox/user.js, prefs 2003 and 2004 | github.com"
                                     [2]: https://web.archive.org/web/20221029173118/https://en.wikipedia.org/wiki/WebRTC "WebRTC - Wikipedia | en.wikipedia.org"
+                                    [3]: https://web.archive.org/web/20261105232457/https://developer.mozilla.org/en-US/docs/Web/API/RTCIceCandidate "RTCIceCandidate - Web APIs | MDN | developer.mozilla.org"
+                                    [4]: https://web.archive.org/web/20240722035010/https://searchfox.org/mozilla-central/source/dom/media/webrtc/jsapi/PeerConnectionImpl.cpp "PeerConnectionImpl.cpp - mozsearch | searchfox.org"
                                 call:
                                     function: AddFirefoxPrefs
                                     parameters:

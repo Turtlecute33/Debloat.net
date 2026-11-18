@@ -1491,6 +1491,10 @@ actions:
           Flatpak applications may use the same trash using special APIs [3].
           However, Snap applications do not have an API to use the global trash [4].
 
+          When you move files to the trash from another drive or partition, such as a USB drive, they can go to
+          a trash folder at the top of that drive: `.Trash/$uid` or `.Trash-$uid` [1]. This script does not
+          empty these folders.
+
           [1]: https://web.archive.org/web/20221029151648/https://specifications.freedesktop.org/trash-spec/trashspec-latest.html "The FreeDesktop.org Trash specification | freedesktop.org"
           [2]: https://web.archive.org/web/20221029151712/https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html "XDG Base Directory Specification | freedesktop.org"
           [3]: https://web.archive.org/web/20221029151919/https://docs.flatpak.org/en/latest/portal-api-reference.html#gdbus-org.freedesktop.portal.Trash "Portal API Reference - Flatpak documentation | docs.flatpak.org"
@@ -2440,6 +2444,9 @@ actions:
                   This script uses the `ubuntu-report` CLI to opt you out of data submission [1].
 
                   Alternatively, one can opt out during the installation of Ubuntu [2].
+
+                  > **Note:** Reverting this script runs `ubuntu-report -f send yes`. This opts you in, and it
+                  > collects a new report and sends it to Canonical at once [1].
 
                   [1]: https://web.archive.org/web/20221029162538/https://github.com/ubuntu/ubuntu-report/blob/8e6030ff9bbeacacf41a9b58ea638a5c9a6f864d/README.md#synopsis-1 "ubuntu-report/README.md at 8e6030ff9bbeacacf41a9b58ea638a5c9a6f864d · ubuntu/ubuntu-report | GitHub"
                   [2]: https://web.archive.org/web/20221029162523/https://lists.ubuntu.com/archives/ubuntu-devel/2018-February/040139.html "More diagnostics data from desktop | lists.ubuntu.com"
@@ -3858,8 +3865,7 @@ actions:
                 name: Disable WebRTC exposure of your private IP address in Firefox
                 recommend: standard
                 docs: |-
-                  Websites can obtain your local IP address through WebRTC's peer-to-peer protocol, facilitated
-                  by JavaScript [1].
+                  This script sets the Firefox preference `media.peerconnection.ice.default_address_only` to `true` [1].
 
                   WebRTC (Web Real-Time Communication) is a free and open-source project offering real-time
                   communication (RTC) via application programming interfaces (APIs) to web browsers and mobile
@@ -3869,9 +3875,19 @@ actions:
                   specifications have been published by the World Wide Web Consortium (W3C) and the Internet
                   Engineering Task Force (IETF) [2].
 
-                  [1]: https://web.archive.org/web/20221025162743/https://wiki.archlinux.org/title/Firefox/Privacy#WebRTC_exposes_LAN_IP_address "WebRTC exposes LAN IP address | Firefox/Privacy - ArchWiki | wiki.archlinux.org"
+                  To connect, WebRTC gives the page ICE candidates, which contain IP addresses of your device [4].
+                  Unless a page uses, or has permission to use, your camera or microphone, Firefox already gathers
+                  candidates only from the network interface of the default route, and hides your local IP address
+                  behind a random `.local` (mDNS) name [5]. This preference applies the same interface limit to pages
+                  that have this access, so they do not get the addresses of your other network interfaces [1] [5].
+                  These pages still get the local IP address of the default interface. The preference
+                  `media.peerconnection.ice.no_host` hides it from them as well, but it often breaks video calls [1].
+
+                  [1]: https://web.archive.org/web/20261025104839/https://github.com/arkenfox/user.js/blob/master/user.js "arkenfox/user.js, prefs 2003 and 2004 | github.com"
                   [2]: https://web.archive.org/web/20221029173118/https://en.wikipedia.org/wiki/WebRTC "WebRTC - Wikipedia | en.wikipedia.org"
                   [3]: https://web.archive.org/web/20221029173306/https://blogs.trilogy-lte.com/post/77427158750/how-webrtc-is-revolutionizing-telephony "How WebRTC Is Revolutionizing Telephony | blogs.trilogy-lte.com"
+                  [4]: https://web.archive.org/web/20261105232457/https://developer.mozilla.org/en-US/docs/Web/API/RTCIceCandidate "RTCIceCandidate - Web APIs | MDN | developer.mozilla.org"
+                  [5]: https://web.archive.org/web/20240722035010/https://searchfox.org/mozilla-central/source/dom/media/webrtc/jsapi/PeerConnectionImpl.cpp "PeerConnectionImpl.cpp - mozsearch | searchfox.org"
                 call:
                   function: AddFirefoxPrefs
                   parameters:
