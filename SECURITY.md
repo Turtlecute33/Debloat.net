@@ -25,9 +25,9 @@ Only the latest version, the one live on [debloat.net](https://debloat.net), rec
   stay in your browser, and a script is saved through a normal browser download.
 - **No execution.** The site only generates script files. It never runs them and never asks for
   elevated privileges. You review the script and decide whether to run it.
-- **Strict Content Security Policy.** Following OWASP guidance, the page can load scripts only
-  from its own origin and the analytics host below, which protects against cross-site scripting
-  and data injection.
+- **Content Security Policy.** Following OWASP guidance, the page can load scripts only from its
+  own origin and the analytics host below. It also allows inline scripts, which the page needs, so
+  it limits where code can come from but is not a full guard against cross-site scripting.
 - **Safe links.** External links cannot access the page that opened them, and no referrer is
   sent.
 - **Minimal third parties.** The only request beyond the site's own files is a cookie-free page

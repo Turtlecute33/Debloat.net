@@ -92,7 +92,8 @@
         <InfoTooltipWrapper>
           <CopyableCommand>./{{ filename }}</CopyableCommand>
           <template #info>
-            Alternatively you can locate the file in <strong>Finder</strong> and double click on it.
+            Run it from Terminal as shown. Double-clicking the file in <strong>Finder</strong>
+            usually opens it in a text editor instead of running it.
           </template>
         </InfoTooltipWrapper>
       </p>

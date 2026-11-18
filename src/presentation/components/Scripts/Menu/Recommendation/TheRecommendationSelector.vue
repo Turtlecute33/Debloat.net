@@ -29,7 +29,7 @@
           description="Provides a balanced approach between privacy and functionality."
           recommendation="Recommended for most users who wish to improve privacy with best-practices without affecting stability."
           :includes="[
-            'Retains functionality of all apps and system services.',
+            'Keeps apps and system services working; side effects are noted in the tweak docs.',
             'Clears non-essential OS and app telemetry data and caches.',
             'Keeps essential security services enabled.',
           ]"

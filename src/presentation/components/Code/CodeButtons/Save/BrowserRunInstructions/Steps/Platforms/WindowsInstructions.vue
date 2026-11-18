@@ -19,7 +19,8 @@
           Browsers may warn you when downloading scripts.
         </p>
         <p>
-          privacy.sexy scripts are verified to be safe and are dedicated to securing your privacy.
+          debloat.net scripts are open source and built in your browser, so you can read every
+          command before you run it.
         </p>
         <p>
           In <strong>Edge</strong>:
@@ -49,7 +50,7 @@
         </p>
         <p>
           These false positives are common for scripts that modify system settings.
-          Don't worry; privacy.sexy is secure, transparent, and open-source.
+          debloat.net is transparent and open source, so you can check what the script does.
         </p>
         <p>
           To handle false warnings in <strong>Defender</strong>:

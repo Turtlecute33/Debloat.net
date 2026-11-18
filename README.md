@@ -39,8 +39,8 @@
 
 ## How it works
 
-1. **Choose your system and a preset.** Start from *Standard*, which keeps every app and
-   service working, or *Strict* for more privacy. Then add or remove single tweaks.
+1. **Choose your system and a preset.** Start from *Standard*, which keeps apps and
+   services working, or *Strict* for more privacy. Then add or remove single tweaks.
 2. **Read before you run.** Each tweak explains what it changes and what it may break, with
    links to vendor documentation. The script updates live as you choose.
 3. **Run it yourself.** Copy or download the script (`.bat` on Windows, `.sh` on macOS and
