@@ -8,6 +8,7 @@
       </div>
       <FlatButton
         icon="xmark"
+        aria-label="Close"
         class="dialog__close-button"
         @click="hide"
       />
