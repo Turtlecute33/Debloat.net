@@ -3729,11 +3729,14 @@ actions:
                             if [[ "$current_state" == *On ]]; then
                                 printf 'on\n' > "$remote_login_state"
                                 chmod 600 "$remote_login_state"
-                                if echo 'yes' | systemsetup -setremotelogin off; then
+                                # Without Full Disk Access macOS refuses the change, so read the state back instead of trusting the exit code
+                                echo 'yes' | systemsetup -setremotelogin off
+                                if [[ "$(systemsetup -getremotelogin 2>/dev/null)" == *Off ]]; then
                                     echo 'Disabled incoming SSH and SFTP logins.'
                                 else
                                     rm -f "$remote_login_state"
-                                    >&2 echo 'Failed to disable remote login.'
+                                    >&2 echo 'Failed to disable remote login. macOS allows this change only if your terminal app has'
+                                    >&2 echo 'Full Disk Access (System Settings > Privacy & Security > Full Disk Access).'
                                 fi
                             elif [[ "$current_state" == *Off ]]; then
                                 echo 'Skipping, remote login is already disabled.'
