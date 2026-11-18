@@ -5186,13 +5186,15 @@ functions:
       function: RunIfCommandExists
       parameters:
         command: python3
+        # The quoted delimiter passes the code to Python unchanged; without it, the shell running as
+        # root would expand `$` and backticks in the code and rewrite backslashes.
         code: |-
-          python3 <<EOF
+          python3 <<'EOF'
           {{ $code }}
           EOF
         revertCode: |-
           {{ with $revertCode }}
-          python3 <<EOF
+          python3 <<'EOF'
           {{ . }}
           EOF
           {{ end }}
@@ -5213,6 +5215,7 @@ functions:
     # Runs as the invoking user. As root, the state directory below (and any missing parent such as
     # `~/.local/state`) was created root-owned, so later user-level scripts such as the Firefox ones
     # could no longer write their own state there.
+    # The heredoc delimiter is quoted for the same reason as in `RunPython3Code`.
     call:
       function: RunAsTargetUser
       parameters:
@@ -5220,7 +5223,7 @@ functions:
           if ! command -v python3 > /dev/null 2>&1; then
             echo 'Skipping because "python3" is not found.'
           else
-            run_as_target_user python3 <<EOF
+            run_as_target_user python3 <<'EOF'
           from pathlib import Path
           import hashlib, os, json, sys
           property_name = '{{ $setting }}'
@@ -5284,7 +5287,7 @@ functions:
           if ! command -v python3 > /dev/null 2>&1; then
             >&2 echo 'Cannot revert because "python3" is not found.'
           else
-            run_as_target_user python3 <<EOF
+            run_as_target_user python3 <<'EOF'
           from pathlib import Path
           import hashlib, os, json, sys
           property_name = '{{ $setting }}'

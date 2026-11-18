@@ -700,8 +700,8 @@ describe('compiled collection regressions', () => {
       // Firefox scripts that run later could no longer record their own state there.
       const script = getScript(OperatingSystem.Linux, 'Disable Visual Studio Code telemetry');
 
-      expect(script.code.execute).to.include('run_as_target_user python3 <<EOF');
-      expect(script.code.revert).to.include('run_as_target_user python3 <<EOF');
+      expect(script.code.execute).to.include('run_as_target_user python3 <<\'EOF\'');
+      expect(script.code.revert).to.include('run_as_target_user python3 <<\'EOF\'');
     });
 
     it('removes pacman packages by exact name and without cascading to dependents', () => {
