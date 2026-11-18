@@ -183,7 +183,7 @@ export function renderPage({
 <meta name="twitter:card" content="summary_large_image">
 <meta name="referrer" content="no-referrer">
 <style>${STYLES}</style>
-<script type="application/ld+json">${JSON.stringify(jsonLd)}</script>
+<script type="application/ld+json">${JSON.stringify(jsonLd).replaceAll('<', '\\u003c')}</script>
 </head>
 <body>
 <header class="masthead">
