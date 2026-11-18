@@ -71,12 +71,16 @@
   <!--
       Injected once `load` has fired: a still-pending `async` tag keeps delaying the event,
       while dynamically inserted scripts never do. Keeps a slow host off the load path.
+      The integrity hash pins the tracker file: update it when that file changes, or the browser
+      blocks the tracker.
     -->
   <script>
     addEventListener('load', () => {
       const s = document.createElement('script');
       s.async = true;
       s.src = 'https://s.turtlecute.org/assets/index-B7xKq2Lp.js';
+      s.integrity = 'sha384-6PHtXKae10+dZuA/fcmjkSTDco+NPBE5fZ4eS/Em2lVIsS6FdDZIgs06MBJLEcSW';
+      s.crossOrigin = 'anonymous';
       s.dataset.websiteId = '9b0fe58d-35b1-4222-98f9-d7c0798eff18';
       document.head.appendChild(s);
     }, { once: true });
