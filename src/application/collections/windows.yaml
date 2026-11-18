@@ -9110,6 +9110,7 @@ actions:
                             parameters:
                                 serviceName: VSStandardCollectorService150 # (Get-Service -Name VSStandardCollectorService150).StartType
                                 defaultStartupMode: Manual # Manual since Visual Studio 2022, allowed values: Automatic | Manual
+                                ignoreMissingOnRevert: 'true' # Installed only with Visual Studio
                     -
                         name: Disable Diagnostics Hub log collection
                         recommend: standard # Improves privacy, security and performance with low risk of system disruption
@@ -9614,6 +9615,7 @@ actions:
                                 # Display name: "NVIDIA Telemetry Container"
                                 # Description: "Container service for NVIDIA Telemetry"
                                 defaultStartupMode: Automatic
+                                ignoreMissingOnRevert: 'true' # Installed only with NVIDIA drivers that include telemetry
                     -
                         category: Disable Nvidia telemetry scheduled tasks
                         docs: |-
@@ -10420,11 +10422,13 @@ actions:
                                                 parameters:
                                                     serviceName: edgeupdate # Check: (Get-Service -Name edgeupdate).StartType
                                                     defaultStartupMode: Automatic
+                                                    ignoreMissingOnRevert: 'true' # Missing when Edge is removed
                                             -
                                                 function: DisableService
                                                 parameters:
                                                     serviceName: edgeupdatem # Check: (Get-Service -Name edgeupdatem).StartType
                                                     defaultStartupMode: Manual
+                                                    ignoreMissingOnRevert: 'true' # Missing when Edge is removed
                                     -
                                         name: Disable Edge automatic update scheduled tasks
                                         docs: |- # refactor-with-variable: Same • Edge Update Caution
@@ -23049,6 +23053,7 @@ actions:
                                         parameters:
                                             serviceName: MDDlpSvc # Check: (Get-Service -Name 'MDDlpSvc').StartType
                                             defaultStartupMode: Automatic
+                                            ignoreMissingOnRevert: 'true' # Missing on Windows 10 Pro (≥ 22H2) and Windows 11 Pro (≥ 23H2)
                                     -
                                         function: SoftDeleteFiles
                                         parameters:
