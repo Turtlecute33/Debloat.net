@@ -151,6 +151,17 @@ describe('compiled Unix collection safety', () => {
         expect(execute).to.include('run_as_target_user "$google_update_tool" --nuke');
         expect(getLines(execute).filter((line) => line.includes('--nuke') && !line.includes('run_as_target_user'))).to.deep.equal([]);
       });
+
+      it('clears the iOS simulators of the invoking user', () => {
+        // `simctl` works on the simulators of the user that runs it,
+        // so as root it erased root's empty set.
+        const { execute } = getScript(OperatingSystem.macOS, 'Clear iOS simulators').code;
+        const toolLines = getLines(execute).filter((line) => /\b(?:xcrun simctl|osascript)\b/.test(line));
+        const rootLines = toolLines.filter((line) => !/^run_as_target_user (?:xcrun|osascript) /.test(line));
+
+        expect(toolLines.length).to.be.greaterThan(0);
+        expect(rootLines).to.deep.equal([]);
+      });
     });
 
     describe('PersistUserEnvironmentConfiguration', () => {
