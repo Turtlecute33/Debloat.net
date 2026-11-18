@@ -23,6 +23,13 @@ scripting:
         if [ -n "$target_home" ] && [ -d "$target_home" ]; then
             export HOME="$target_home"
             export USER="$target_user"
+            # Some bash builds (such as Homebrew bash) expand `~` from the HOME the process started with.
+            # Start the script again once, so that `~` uses the new HOME.
+            tilde_home=~
+            if [ "$tilde_home" != "$HOME" ] && [ -z "$PRIVACY_SEXY_HOME_RESTARTED" ] \
+                && [ "${BASH_SOURCE[0]}" = "$0" ] && [ -f "$0" ] && [ -r "$0" ]; then
+                PRIVACY_SEXY_HOME_RESTARTED=1 exec "$BASH" "$0" "$@"
+            fi
         else
             echo "Unable to resolve the home directory for $target_user; using $HOME." >&2
         fi
