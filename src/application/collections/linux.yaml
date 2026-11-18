@@ -3384,44 +3384,6 @@ actions:
                         setting: settingsSync.keybindingsPerPlatform
                         jsonValue: >-
                           false
-                -
-                  name: Disable synchronization of Visual Studio Code extensions
-                  docs: |-
-                    Visual Studio Code synchronizes all built-in and installed extensions, along with their
-                    global enablement state, by default [1] [2].
-
-                    This script prevents the synchronization of all Visual Studio Code extensions.
-
-                    To disable extension synchronization, set `settingsSync.ignoredExtensions` [1],
-                    which configures the list of extensions to be ignored during synchronization [2].
-
-                    [1]: https://web.archive.org/web/20221029172856/https://github.com/microsoft/vscode-docs/blob/9a900b380e11530376104ffc83a004b82553728e/docs/editor/settings-sync.md "vscode-docs/settings-sync.md at main · microsoft/vscode-docs · GitHub | github.com"
-                    [2]: https://web.archive.org/web/20221029172910/https://github.com/microsoft/vscode/blob/095ddabc52b82498ee7f718a34f9dd11d59099a8/src/vs/platform/userDataSync/common/userDataSync.ts#L65-L78 "vscode/userDataSync.ts at 095ddabc52b82498ee7f718a34f9dd11d59099a8 · microsoft/vscode · GitHub | github.com"
-                  call:
-                    function: SetVsCodeSetting
-                    parameters:
-                        setting: settingsSync.ignoredExtensions
-                        jsonValue: >-
-                          ["*"]
-                -
-                  name: Disable synchronization of Visual Studio Code settings
-                  docs: |-
-                    By default, Visual Studio Code synchronizes all settings, except for machine settings
-                    (those with machine or machine-overridable scopes), as these are specific to a given machine [1] [2].
-
-                    This script disables the synchronization of all settings.
-
-                    You can specify settings to ignore during synchronization using the `settingsSync.ignoredSettings`
-                    setting [1] [2].
-
-                    [1]: https://web.archive.org/web/20221029172856/https://github.com/microsoft/vscode-docs/blob/9a900b380e11530376104ffc83a004b82553728e/docs/editor/settings-sync.md "vscode-docs/settings-sync.md at main · microsoft/vscode-docs · GitHub | github.com"
-                    [2]: https://web.archive.org/web/20221029172910/https://github.com/microsoft/vscode/blob/095ddabc52b82498ee7f718a34f9dd11d59099a8/src/vs/platform/userDataSync/common/userDataSync.ts#L79-L89 "vscode/userDataSync.ts at 095ddabc52b82498ee7f718a34f9dd11d59099a8 · microsoft/vscode · GitHub | github.com"
-                  call:
-                    function: SetVsCodeSetting
-                    parameters:
-                        setting: settingsSync.ignoredSettings
-                        jsonValue: >-
-                          ["*"]
       -
         name: Disable .NET telemetry
         recommend: standard
