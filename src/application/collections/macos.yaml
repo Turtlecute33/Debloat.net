@@ -1254,6 +1254,12 @@ actions:
                         docs: |-
                             This script resets all permissions for applications.
                             It revokes all previously granted permissions, enhancing privacy and security by ensuring no application has unauthorized access to system services or user data.
+
+                            > **Caution:** The script runs `tccutil reset All` as root, so it removes every privacy permission, also
+                            > **Full Disk Access**, **Accessibility** and **Screen Recording**. This can include the terminal app that runs
+                            > the script. Apps that need these permissions, such as backup, screen sharing, window manager and accessibility
+                            > tools, stop working until you allow them again in System Settings under Privacy & Security.
+                            > You cannot undo this.
                         call:
                             function: ResetServicePermissions
                             parameters:
