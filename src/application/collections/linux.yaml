@@ -871,7 +871,7 @@ actions:
                 #   Changes should be done at both places.
                 #   Marked: refactor-with-partials
                 docs: |-
-                  This script targets the Firefox browsing history, including URLs, downloads, bookmarks, and site visits, by deleting specific database entries.
+                  This script targets the Firefox browsing history, including URLs, downloads, bookmarks, and site visits, by deleting the database files that store them.
 
                   Firefox stores various user data in a file named `places.sqlite`. This file includes:
 
@@ -882,7 +882,6 @@ actions:
                   - Bookmark roots such as places, menu, toolbar, tags, unfiled (`moz_bookmarks_roots`) [1]
 
                   The `moz_places` table holds URL data, connecting to various other tables like `moz_annos`, `moz_bookmarks`, `moz_inputhistory`, and `moz_historyvisits` [2].
-                  Due to these connections, the script removes entries from all relevant tables simultaneously to maintain database integrity.
                   
                   **Bookmarks**: Stored across several tables (`moz_bookmarks`, `moz_bookmarks_folders`, `moz_bookmarks_roots`) [3], with additional undocumented tables like `moz_bookmarks_deleted` [4].
 

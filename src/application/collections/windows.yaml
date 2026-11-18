@@ -1546,7 +1546,13 @@ actions:
                                         fileGlob: '%LOCALAPPDATA%\Google\Software Reporter Tool\*.log'
                             -
                                 name: Clear Chrome user data
-                                docs: https://chromium.googlesource.com/chromium/src/+/HEAD/docs/user_data_dir.md
+                                docs: |-
+                                    This script deletes Chrome's user data directory, which holds every Chrome profile [1].
+
+                                    > **Caution:** This deletes all bookmarks, saved passwords, extensions and settings in Chrome, not only
+                                    > the history. It cannot be undone.
+
+                                    [1]: https://chromium.googlesource.com/chromium/src/+/HEAD/docs/user_data_dir.md "User Data Directory | chromium.googlesource.com"
                                 call:
                                     - # Windows XP
                                         function: ClearDirectoryContents
@@ -1569,7 +1575,7 @@ actions:
                                 #   Changes should be done at both places.
                                 #   Marked: refactor-with-partials
                                 docs: |-
-                                    This script targets the Firefox browsing history, including URLs, downloads, bookmarks, and site visits, by deleting specific database entries.
+                                    This script targets the Firefox browsing history, including URLs, downloads, bookmarks, and site visits, by deleting the database files that store them.
 
                                     Firefox stores various user data in a file named `places.sqlite`. This file includes:
 
@@ -1580,7 +1586,6 @@ actions:
                                     - Bookmark roots such as places, menu, toolbar, tags, unfiled (`moz_bookmarks_roots`) [1]
 
                                     The `moz_places` table holds URL data, connecting to various other tables like `moz_annos`, `moz_bookmarks`, `moz_inputhistory`, and `moz_historyvisits` [2].
-                                    Due to these connections, the script removes entries from all relevant tables simultaneously to maintain database integrity.
                                     
                                     **Bookmarks**: Stored across several tables (`moz_bookmarks`, `moz_bookmarks_folders`, `moz_bookmarks_roots`) [3], with additional undocumented tables like `moz_bookmarks_deleted` [4].
 
@@ -3179,7 +3184,7 @@ actions:
                             > With location access off, apps and commands such as `netsh wlan show networks` can no longer list
                             > Wi-Fi networks or read the name of the connected one [7]. This affects Wi-Fi analyzers and VPN or
                             > firewall apps that react to the network you are on. Connecting to Wi-Fi from the taskbar and
-                            > Settings keeps working.
+                            > Settings keeps working. Automatic time zone, Find My Device and local weather also stop working.
 
                             [1]: https://web.archive.org/web/20240427110714/https://learn.microsoft.com/en-us/windows/client-management/mdm/policy-csp-privacy#letappsaccesslocation "Privacy Policy CSP - Windows Client Management | Microsoft Learn | learn.microsoft.com"
                             [2]: https://web.archive.org/web/20240427120219/https://learn.microsoft.com/en-us/windows/uwp/packaging/app-capability-declarations "App capability declarations - UWP applications | Microsoft Learn | learn.microsoft.com"
@@ -5935,6 +5940,9 @@ actions:
                             from your Windows device [1]. This includes data about your device's usage, app compatibility, and
                             system performance, which can be sensitive in nature. By stopping this data from being sent, you reduce
                             the amount of personal information that could potentially be accessed by third parties.
+
+                            On Home and Pro editions, Windows treats the `0` that this script sets as `1` (*Required*), so required
+                            diagnostic data is still sent. Only Enterprise, Education, IoT and Server editions turn it off fully [1].
 
                             The script works by configuring the Group Policy Object (GPO) and Local Policy preferences, which
                             essentially govern your device's data sharing policies [2]. These modifications restrict the data that Windows
@@ -10352,8 +10360,8 @@ actions:
                                     However, this could leave your system vulnerable to security risks if attackers exploit unpatched vulnerabilities in
                                     older versions.
 
-                                    Disabling updates is beneficial if you do not rely on Edge or WebView2 daily, as it reduces unnecessary data
-                                    transmission and unwanted system changes.
+                                    Apps such as the new Outlook, Teams and Widgets use WebView2 even if you never open Edge, so disabling these
+                                    updates also stops security fixes for those apps.
 
                                     > **Caution:** Disabling updates may reduce security if you use Edge and its components (WebView2).
 
@@ -10381,7 +10389,8 @@ actions:
                                             Keep in mind:
 
                                             - Security vulnerabilities and issues in Edge won't be fixed if updates are disabled [1] [3] [4]. 
-                                            - Manual updates are still possible as these services start automatically for manual updates.
+                                            - Manual updates may fail while these services are disabled, because a disabled service cannot start.
+                                              To update manually, revert this script first.
 
                                             ### Overview of default service statuses
 
@@ -12482,7 +12491,8 @@ actions:
                             and they log Event Logs [12] [13] [14] [15] [16], which reveals information about the system's state. There have also been vulnerabilities found in these services
                             in the past, adding an additional layer of risk [17].
 
-                            Disabling these services do not affect manual updates as these services are started for manual updates automatically [4].
+                            Manual updates may fail while these services are disabled, because a disabled service cannot start.
+                            To update manually, revert this script first.
 
                             Often administrators choose to delete these services to prevent auto-updates [9], a practice that is acknowledged by the Google team [9].
                             By disabling these services, this script aims to give users more control over their system and mitigate potential privacy and security risks, albeit at the cost
@@ -12657,7 +12667,7 @@ actions:
                 docs: |-
                     This category includes scripts designed to disable Adobe's background automatic update services and tasks.
                     These automatic updates run in the background [1], typically starting up with your PC, and work to keep your Adobe software up to date [1].
-                    By disabling them, you optimize your system's performance, reduce unwanted data collection, and minimize your vulnerability surface.
+                    By disabling them, you optimize your system's performance and reduce unwanted data collection, but security fixes no longer install automatically.
                     These scripts only disable automatic updates; manual updates are still possible.
 
                     [1]: https://web.archive.org/web/20230624030406/https://helpx.adobe.com/x-productkb/global/adobe-background-processes.html "Why do I need the Adobe background processes? | helpx.adobe.com"
@@ -12727,8 +12737,8 @@ actions:
                             This script disables the "Adobe Acrobat Update Task" scheduled task.
 
                             It is responsible for keeping your Adobe Reader and Acrobat applications up to date with the latest enhancements and security fixes [1].
-                            By disabling it, you reduce the system's exposure to potential vulnerabilities, though at the cost of not receiving automatic updates
-                            in the background.
+                            If you disable it, Adobe Reader and Acrobat no longer receive security fixes in the background, so known vulnerabilities
+                            stay open until you update them manually.
 
                             ### Overview of default task statuses
 
@@ -13257,6 +13267,9 @@ actions:
                                     > **Note:** Encryption is only used if your configured DNS server offers DoH. Windows recognises
                                     > several well-known providers automatically. If your DNS server does not support DoH, this
                                     > script has no effect on your traffic, and nothing breaks.
+                                    >
+                                    > Microsoft documents the DoH client for Windows 11 and Windows Server 2022. On Windows 10 this
+                                    > script has no effect.
                                     >
                                     > The policy is deliberately not set to "require", because that would stop name resolution
                                     > entirely on networks whose DNS server does not support DoH.
@@ -16191,7 +16204,8 @@ actions:
                     safeguarding user privacy.
 
                     > **Caution**: This script may impact the delivery of diagnostic and usage-based solutions from
-                    > Microsoft [1] [2].
+                    > Microsoft [1] [2]. Microsoft also lists `self.events.data.microsoft.com` among the Office endpoints and states
+                    > that blocking them can stop users from saving documents to the cloud or seeing recently used documents [2].
 
                     ### Blocked Hosts
 
@@ -28441,7 +28455,8 @@ actions:
                             4. **Exploit protection:**
                               Applies exploit mitigation techniques to operating system processes and applications [1] [2] [3].
 
-                            These components are enabled and configured by default on Windows 10 and 11 [1] [3] [8].
+                            Exploit protection is on by default on Windows 10 and 11 [1] [3] [8]. Network protection and controlled folder
+                            access are off unless you or an administrator turn them on.
                             They can also be remotely configured and set up in managed environments, such as enterprise organizations [2].
                             Disabling Exploit Guard can affect local or organizational configurations, such as those set by schools or employers.
 
@@ -29247,8 +29262,8 @@ actions:
                     -
                         name: Disable automatic daily installation of Windows updates
                         docs: |-
-                            This script stops Windows from automatically installing updates every day. By doing so, you gain control over when update
-                            happen on your computer [1] [2].
+                            This script removes a configured `ScheduledInstallDay` policy value, so updates are no longer forced on a set day [1] [2].
+                            It does not stop automatic installation by itself: on a clean installation the value does not exist and this script changes nothing.
 
                             By default, Windows is set to automatically update every day [2]. Having control over the update timing allows you to review
                             what is being changed, thereby protecting your privacy and enhancing your system's security.
@@ -29273,8 +29288,8 @@ actions:
                     -
                         name: Disable scheduled automatic updates
                         docs: |-
-                            This script turns off the automatic installation of Windows updates that are set to occur at a specific time.
-                            By doing this, you take back control over when your computer updates itself [1] [2] [3].
+                            This script removes a configured `ScheduledInstallTime` policy value, so updates are no longer forced at a set time [1] [2] [3].
+                            It does not stop automatic installation by itself: on a clean installation the value does not exist and this script changes nothing.
                             The default behavior is to install updates at 3 AM [3].
 
                             Windows updates can be important for system security, but automatic installation could occur at inconvenient times and may even
@@ -29324,6 +29339,8 @@ actions:
                                     This script turns off the Windows Update service, which is technically known as Windows Update Agent [1] [2].
                                     By disabling this service, the automatic detection, download, and installation of updates for both Windows and other
                                     installed programs are halted [3] [4].
+                                    Windows Update Medic Service (`WaaSMedicSvc`) and `upfc.exe` can turn this service on again, so it stays off only
+                                    if you also disable them with the scripts in this category.
 
                                     Update can often come bundled with changes that could affect your privacy settings or introduce features that collect
                                     more of your data. Taking control of when and how updates are applied provides you with the opportunity to review any changes
@@ -29369,6 +29386,8 @@ actions:
 
                                     Windows updates relies on this service [1] [3].
                                     If stopped, your devices will not be able to download and install latest updates [1].
+                                    Windows Update Medic Service (`WaaSMedicSvc`) and `upfc.exe` can turn this service on again, so it stays off only
+                                    if you also disable them with the scripts in this category.
 
                                     Turning off this service can affect the update process and might cause issues like freezing during update scanning [3].
 
@@ -30492,6 +30511,7 @@ actions:
                                 docs: |- # refactor-with-variables: • Security Update Postpone Caution
                                     This script maximizes the pause duration for system updates via the settings interface.
                                     It postpones both feature and quality updates in Windows 10 and Windows 11.
+                                    It sets the end of the pause to 17 January 2963, far past the five weeks that Settings allows.
                                     This is particularly useful for those preferring fewer interruptions from regular updates.
 
                                     By default, the following registry keys are absent in Windows 10 and Windows 11 and are added only when updates are
@@ -31096,8 +31116,8 @@ actions:
 
                             Windows registered antivirus programs for downloaded files from Internet or through e-mail attachments [1].
                             If multiple programs are registered, they will all be notified [1] [3].
-                            This is disabled by default, so even if you do not configure run this script, Windows does not call the registered
-                            antivirus programs when file attachments are opened [1].
+                            Microsoft documents this policy as not configured by default [1], but clean Windows 10 and 11 installations set it
+                            to `3`, which turns the scans on [5].
 
                             If it is enabled, Windows blocks file from being opened when antivirus program fails [1].
                             It is the recommended setting by Microsoft [1].
@@ -31105,7 +31125,7 @@ actions:
                             Preventing calling antivirus:
 
                             - Increases privacy by not sharing your file data proactively with installed antiviruses.
-                            - Decreases by detecting and mitigating potential malicious software. Disabling it has **Moderate**
+                            - Decreases security by preventing the detection and mitigation of potential malicious software. Disabling it has **Moderate**
                               criticality as it is not an appropriate antivirus configuration according to US government [4].
 
                             An updated antivirus program must be installed for this policy setting to function properly [4].
@@ -31311,7 +31331,7 @@ actions:
                     -
                         function: ShowExplorerRestartSuggestion
             -
-                name: Disable hibernation for faster startup and to avoid sensitive data storage
+                name: Disable hibernation to avoid sensitive data storage
                 docs: |-
                     This script commands your system to deactivate the hibernation feature. Hibernate is a power-saving state that saves your current work and turns
                     off the computer [1]. When your computer hibernates, it saves the contents of its RAM to your hard disk and powers off the machine [2]. Upon starting
@@ -31322,6 +31342,7 @@ actions:
                     of such potential privacy breaches.
 
                     It configures hibernate by using `powercfg` command line tool [3].
+                    This also turns off Fast Startup, which uses the hibernation file, so starting the computer after a shutdown can take longer [3].
 
                     [1]: https://web.archive.org/web/20230806164910/https://support.microsoft.com/en-us/windows/shut-down-sleep-or-hibernate-your-pc-2941d165-7d0a-a5e8-c5ad-8c972e8e6eff
                     [2]: https://web.archive.org/web/20230712211259/https://learn.microsoft.com/en-us/windows-hardware/drivers/kernel/system-sleeping-states
