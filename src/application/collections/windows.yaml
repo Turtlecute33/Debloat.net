@@ -41922,8 +41922,10 @@ functions:
                     # - 'C:\'   becomes 'C:\*'
                     # - 'C:'    becomes 'C:\*'
                     # - 'C:\*'  remains 'C:\*'
+                    # An empty path is refused: cmd expands an undefined variable such as `%TEMP%` to nothing, and
+                    # '\*' is every item on the current drive.
                     pathGlob: >-
-                        $($directoryGlob = "{{ $directoryGlob }}"; if ($directoryGlob.EndsWith('\*')) { $directoryGlob } elseif ($directoryGlob.EndsWith('\')) { "$($directoryGlob)*" } else { "$($directoryGlob)\*" } )
+                        $($directoryGlob = "{{ $directoryGlob }}"; if ([string]::IsNullOrWhiteSpace($directoryGlob)) { throw 'Refusing to clear the directory: its path is empty, which would target the drive root. An environment variable in the path may be undefined.' }; if ($directoryGlob.EndsWith('\*')) { $directoryGlob } elseif ($directoryGlob.EndsWith('\')) { "$($directoryGlob)*" } else { "$($directoryGlob)\*" } )
                     grantPermissions: '{{ with $grantPermissions }}true{{ end }}'
                     recurse: 'true' # Logs every deleted file name
     -
@@ -41956,8 +41958,10 @@ functions:
                     # Ensure path ends with '\':
                     # - 'C:\'   remains 'C:\'
                     # - 'C:'    becomes 'C:\'
+                    # An empty path is refused: cmd expands an undefined variable such as `%TEMP%` to nothing, and
+                    # '\' is the root of the current drive.
                     pathGlob: >-
-                        $($directoryGlob = "{{ $directoryGlob }}"; if (-Not $directoryGlob.EndsWith('\')) { $directoryGlob += '\' }; $directoryGlob )
+                        $($directoryGlob = "{{ $directoryGlob }}"; if ([string]::IsNullOrWhiteSpace($directoryGlob)) { throw 'Refusing to delete the directory: its path is empty, which would target the drive root. An environment variable in the path may be undefined.' }; if (-Not $directoryGlob.EndsWith('\')) { $directoryGlob += '\' }; $directoryGlob )
                     grantPermissions: '{{ with $grantPermissions }}true{{ end }}'
                     recurse: 'true' # Logs every deleted file name
                     beforeIteration: '{{ with $beforeIteration }}{{ . }}{{ end }}'
