@@ -6187,7 +6187,9 @@ functions:
             >&2 echo "Skipping revert because \"$gnome_schema $gnome_key\" changed after privacy.sexy applied it."
           else
             previous_value="$(run_as_target_user cat "$gnome_state_file")"
-            if run_as_target_user gsettings set "$gnome_schema" "$gnome_key" "$previous_value"; then
+            # Read back as when applying, so the recorded value is not deleted if nothing was saved.
+            if run_as_target_user gsettings set "$gnome_schema" "$gnome_key" "$previous_value" \
+                && [ "$(run_as_target_user gsettings get "$gnome_schema" "$gnome_key")" = "$previous_value" ]; then
               run_as_target_user rm --force "$gnome_state_file"
               echo "Successfully restored \"$gnome_schema $gnome_key\" to \"$previous_value\"."
             else
