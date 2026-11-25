@@ -7719,6 +7719,7 @@ actions:
                                     The script:
 
                                     - Stops Bing web search integration in the Start menu [1] [2] [3] [4] [5].
+                                    - Removes the "Trending searches" section from the taskbar search pop-up [11].
                                     - Disables recent search suggestions in File Explorer [5] [6] [7].
                                     - Prevents search entries from being stored in the registry for future use [5] [6] [7].
 
@@ -7727,7 +7728,7 @@ actions:
 
                                     This script modifies:
 
-                                    - `HKCU\SOFTWARE\Policies\Microsoft\Windows\Explorer!DisableSearchBoxSuggestions` [7] [10].
+                                    - `HKCU\SOFTWARE\Policies\Microsoft\Windows\Explorer!DisableSearchBoxSuggestions` [7] [10] [11].
                                     - `HKLM\SOFTWARE\Policies\Microsoft\Windows\Explorer!DisableSearchBoxSuggestions` [2] [3] [4].
                                     - `HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Search!DisableSearchBoxSuggestions` [8] [9].
 
@@ -7749,6 +7750,7 @@ actions:
                                     [8]: https://archive.ph/2024.07.19-094152/https://www.pcastuces.com/pratique/astuces/6080-print.htm "PC Astuces - Désactiver les recommandations dans la recherche - Windows 10 | www.pcastuces.com"
                                     [9]: https://web.archive.org/web/20240120194547/https://www.deskmodder.de/phpBB3/viewtopic.php?t=23243 "Websuche in der Windows 10 Taskleiste deaktivieren - Deskmodder.de | www.deskmodder.de"
                                     [10]: https://learn.microsoft.com/en-us/answers/questions/4097651/how-to-disable-search-the-web-completley-in-window "How to disable 'Search the web' completely in Windows 11 | Microsoft Q&A"
+                                    [11]: https://web.archive.org/web/20260528125805/https://learn.microsoft.com/en-us/answers/questions/4281310/how-do-i-remove-this-trending-searches-window-from 'How do I remove this "trending searches" window from my taskbar search window? - Microsoft Q&A | learn.microsoft.com'
                                 call:
                                     -
                                         function: SetRegistryValue
