@@ -3,40 +3,35 @@ import type { Script } from '@/domain/Executables/Script/Script';
 import { EventSource } from '@/infrastructure/Events/EventSource';
 import type { ReadonlyRepository, Repository } from '@/application/Repository/Repository';
 import type { CategoryCollection } from '@/domain/Collection/CategoryCollection';
-import { batchedDebounce } from '@/application/Common/Timing/BatchedDebounce';
 import type { ExecutableId } from '@/domain/Executables/Identifiable';
 import { UserSelectedScript } from './UserSelectedScript';
 import type { ScriptSelection } from './ScriptSelection';
 import type { ScriptSelectionChange, ScriptSelectionChangeCommand } from './ScriptSelectionChange';
 import type { SelectedScript } from './SelectedScript';
 
-const DEBOUNCE_DELAY_IN_MS = 100;
-
-export type DebounceFunction = typeof batchedDebounce<ScriptSelectionChangeCommand>;
-
-export class DebouncedScriptSelection implements ScriptSelection {
+/*
+  Changes apply at once. Upstream debounced them for 100 ms to merge the one call per tree leaf
+  that its script tree sent. Every caller here sends one command per user action, and a debounce
+  made reads return the state before the queued changes: a quick second click (uncheck, None
+  after All, another preset) was compared with that old state and lost.
+*/
+export class InMemoryScriptSelection implements ScriptSelection {
   public readonly changed = new EventSource<ReadonlyArray<SelectedScript>>();
 
   private readonly scripts: Repository<SelectedScript>;
 
-  public readonly processChanges: ScriptSelection['processChanges'];
-
   constructor(
     private readonly collection: CategoryCollection,
     selectedScripts: ReadonlyArray<SelectedScript>,
-    debounce: DebounceFunction = batchedDebounce,
   ) {
     this.scripts = new InMemoryRepository<SelectedScript>();
     for (const script of selectedScripts) {
       this.scripts.addItem(script);
     }
-    this.processChanges = debounce(
-      (batchedRequests: readonly ScriptSelectionChangeCommand[]) => {
-        const consolidatedChanges = batchedRequests.flatMap((request) => request.changes);
-        this.processScriptChanges(consolidatedChanges);
-      },
-      DEBOUNCE_DELAY_IN_MS,
-    );
+  }
+
+  public processChanges(command: ScriptSelectionChangeCommand): void {
+    this.processScriptChanges(command.changes);
   }
 
   public isSelected(scriptExecutableId: ExecutableId): boolean {

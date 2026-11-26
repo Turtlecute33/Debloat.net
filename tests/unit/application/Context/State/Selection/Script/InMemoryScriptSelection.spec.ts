@@ -1,20 +1,16 @@
 import { describe, it, expect } from 'vitest';
-import { type DebounceFunction, DebouncedScriptSelection } from '@/application/Context/State/Selection/Script/DebouncedScriptSelection';
+import { InMemoryScriptSelection } from '@/application/Context/State/Selection/Script/InMemoryScriptSelection';
 import { CategoryStub } from '@tests/unit/shared/Stubs/CategoryStub';
 import { CategoryCollectionStub } from '@tests/unit/shared/Stubs/CategoryCollectionStub';
 import { SelectedScriptStub } from '@tests/unit/shared/Stubs/SelectedScriptStub';
 import { ScriptStub } from '@tests/unit/shared/Stubs/ScriptStub';
 import type { CategoryCollection } from '@/domain/Collection/CategoryCollection';
 import type { SelectedScript } from '@/application/Context/State/Selection/Script/SelectedScript';
-import { BatchedDebounceStub } from '@tests/unit/shared/Stubs/BatchedDebounceStub';
-import type { ScriptSelectionChange, ScriptSelectionChangeCommand } from '@/application/Context/State/Selection/Script/ScriptSelectionChange';
-import { expectExists } from '@tests/shared/Assertions/ExpectExists';
+import type { ScriptSelectionChange } from '@/application/Context/State/Selection/Script/ScriptSelectionChange';
 import type { Script } from '@/domain/Executables/Script/Script';
 import { expectEqualSelectedScripts } from './ExpectEqualSelectedScripts';
 
-type DebounceArg = ScriptSelectionChangeCommand;
-
-describe('DebouncedScriptSelection', () => {
+describe('InMemoryScriptSelection', () => {
   describe('constructor', () => {
     describe('initialization of selected scripts', () => {
       const testScenarios: ReadonlyArray<{
@@ -41,7 +37,7 @@ describe('DebouncedScriptSelection', () => {
         it(description, () => {
           // arrange
           const expectedScripts = selectedScripts;
-          const builder = new DebouncedScriptSelectionBuilder()
+          const builder = new InMemoryScriptSelectionBuilder()
             .withSelectedScripts(selectedScripts);
           // act
           const selection = builder.build();
@@ -49,51 +45,6 @@ describe('DebouncedScriptSelection', () => {
           // assert
           expectEqualSelectedScripts(actualScripts, expectedScripts);
         });
-      });
-    });
-    describe('debounce configuration', () => {
-      /*
-        Note: These tests cover internal implementation details, particularly the debouncing logic,
-        to ensure comprehensive code coverage. They are not focused on the public API. While useful
-        for detecting subtle bugs, they might need updates during refactoring if internal structures
-        change but external behaviors remain the same.
-      */
-      it('sets up debounce with a callback function', () => {
-        // arrange
-        const debounceStub = new BatchedDebounceStub<DebounceArg>();
-        const builder = new DebouncedScriptSelectionBuilder()
-          .withBatchedDebounce(debounceStub.func);
-        // act
-        builder.build();
-        // assert
-        expect(debounceStub.callHistory).to.have.lengthOf(1);
-        const [debounceFunc] = debounceStub.callHistory[0];
-        expectExists(debounceFunc);
-      });
-      it('configures debounce with specific delay ', () => {
-        // arrange
-        const expectedDebounceInMs = 100;
-        const debounceStub = new BatchedDebounceStub<DebounceArg>();
-        const builder = new DebouncedScriptSelectionBuilder()
-          .withBatchedDebounce(debounceStub.func);
-        // act
-        builder.build();
-        // assert
-        expect(debounceStub.callHistory).to.have.lengthOf(1);
-        const [, waitInMs] = debounceStub.callHistory[0];
-        expect(waitInMs).to.equal(expectedDebounceInMs);
-      });
-      it('applies debouncing to processChanges method', () => {
-        // arrange
-        const expectedFunc = () => {};
-        const debounceMock: DebounceFunction = () => expectedFunc;
-        const builder = new DebouncedScriptSelectionBuilder()
-          .withBatchedDebounce(debounceMock);
-        // act
-        const selection = builder.build();
-        // assert
-        const actualFunction = selection.processChanges;
-        expect(actualFunction).to.equal(expectedFunc);
       });
     });
   });
@@ -280,7 +231,7 @@ describe('DebouncedScriptSelection', () => {
       // arrange
       const expectedError = 'Provided script array is empty. To deselect all scripts, please use the deselectAll() method instead.';
       const scripts: readonly Script[] = [];
-      const scriptSelection = new DebouncedScriptSelectionBuilder().build();
+      const scriptSelection = new InMemoryScriptSelectionBuilder().build();
       // act
       const act = () => scriptSelection.selectOnly(scripts);
       // assert
@@ -478,33 +429,11 @@ describe('DebouncedScriptSelection', () => {
         });
       });
     });
-    describe('debouncing', () => {
-      it('queues commands for debouncing', () => {
+    describe('applies changes at once', () => {
+      it('a read after a change sees the change', () => {
         // arrange
-        const debounceStub = new BatchedDebounceStub<DebounceArg>();
         const script = new ScriptStub('test');
-        const selection = new DebouncedScriptSelectionBuilder()
-          .withBatchedDebounce(debounceStub.func)
-          .withCollection(createCollectionWithScripts(script))
-          .build();
-        const expectedCommand: ScriptSelectionChangeCommand = {
-          changes: [
-            { scriptId: script.executableId, newStatus: { isReverted: true, isSelected: true } },
-          ],
-        };
-        // act
-        selection.processChanges(expectedCommand);
-        // assert
-        expect(debounceStub.collectedArgs).to.have.lengthOf(1);
-        expect(debounceStub.collectedArgs[0]).to.equal(expectedCommand);
-      });
-      it('does not apply changes during debouncing period', () => {
-        // arrange
-        const debounceStub = new BatchedDebounceStub<DebounceArg>()
-          .withImmediateDebouncing(false);
-        const script = new ScriptStub('test');
-        const selection = new DebouncedScriptSelectionBuilder()
-          .withBatchedDebounce(debounceStub.func)
+        const selection = new InMemoryScriptSelectionBuilder()
           .withCollection(createCollectionWithScripts(script))
           .build();
         const changeEvents = watchForChangeEvents(selection);
@@ -515,54 +444,56 @@ describe('DebouncedScriptSelection', () => {
           ],
         });
         // assert
-        expect(changeEvents).to.have.lengthOf(0);
+        expect(changeEvents).to.have.lengthOf(1);
+        expect(selection.isSelected(script.executableId)).to.equal(true);
+        expectEqualSelectedScripts(
+          selection.selectedScripts,
+          [script.toSelectedScript().withRevert(true)],
+        );
+      });
+      it('a quick second change undoes the first', () => {
+        // arrange
+        const script = new ScriptStub('test');
+        const selection = new InMemoryScriptSelectionBuilder()
+          .withCollection(createCollectionWithScripts(script))
+          .build();
+        // act
+        selection.processChanges({
+          changes: [
+            { scriptId: script.executableId, newStatus: { isSelected: true, isReverted: false } },
+          ],
+        });
+        selection.processChanges({
+          changes: [{ scriptId: script.executableId, newStatus: { isSelected: false } }],
+        });
+        // assert
         expectEqualSelectedScripts(selection.selectedScripts, []);
       });
-      it('applies single change after debouncing period', () => {
+      it('deselectAll right after selectAll leaves nothing selected', () => {
         // arrange
-        const debounceStub = new BatchedDebounceStub<DebounceArg>()
-          .withImmediateDebouncing(false);
-        const script = new ScriptStub('test');
-        const selection = new DebouncedScriptSelectionBuilder()
-          .withBatchedDebounce(debounceStub.func)
-          .withCollection(createCollectionWithScripts(script))
-          .build();
-        const changeEvents = watchForChangeEvents(selection);
-        const expectedSelection = [script.toSelectedScript().withRevert(true)];
-        // act
-        selection.processChanges({
-          changes: [
-            { scriptId: script.executableId, newStatus: { isReverted: true, isSelected: true } },
-          ],
+        const { scriptSelection } = setupTestWithPreselectedScripts({
+          preselect: () => [],
         });
-        debounceStub.execute();
-        // assert
-        expect(changeEvents).to.have.lengthOf(1);
-        expectEqualSelectedScripts(selection.selectedScripts, expectedSelection);
-      });
-      it('applies multiple changes after debouncing period', () => {
-        // arrange
-        const debounceStub = new BatchedDebounceStub<DebounceArg>()
-          .withImmediateDebouncing(false);
-        const scripts = [new ScriptStub('first'), new ScriptStub('second'), new ScriptStub('third')];
-        const selection = new DebouncedScriptSelectionBuilder()
-          .withBatchedDebounce(debounceStub.func)
-          .withCollection(createCollectionWithScripts(...scripts))
-          .build();
-        const changeEvents = watchForChangeEvents(selection);
-        const expectedSelection = scripts.map((s) => s.toSelectedScript().withRevert(true));
         // act
-        for (const script of scripts) {
-          selection.processChanges({
-            changes: [
-              { scriptId: script.executableId, newStatus: { isReverted: true, isSelected: true } },
-            ],
-          });
-        }
-        debounceStub.execute();
+        scriptSelection.selectAll();
+        scriptSelection.deselectAll();
         // assert
-        expect(changeEvents).to.have.lengthOf(1);
-        expectEqualSelectedScripts(selection.selectedScripts, expectedSelection);
+        expectEqualSelectedScripts(scriptSelection.selectedScripts, []);
+      });
+      it('selectOnly right after selectAll keeps only the given scripts', () => {
+        // arrange
+        const { scriptSelection, allScripts } = setupTestWithPreselectedScripts({
+          preselect: () => [],
+        });
+        const expectedScript = allScripts[0];
+        // act
+        scriptSelection.selectAll();
+        scriptSelection.selectOnly([expectedScript]);
+        // assert
+        expectEqualSelectedScripts(
+          scriptSelection.selectedScripts,
+          [expectedScript.toSelectedScript().withRevert(false)],
+        );
       });
     });
   });
@@ -575,7 +506,7 @@ function createCollectionWithScripts(...scripts: Script[]): CategoryCollectionSt
 }
 
 function watchForChangeEvents(
-  selection: DebouncedScriptSelection,
+  selection: InMemoryScriptSelection,
 ): ReadonlyArray<readonly SelectedScript[]> {
   const changes: Array<readonly SelectedScript[]> = [];
   selection.changed.on((s) => changes.push(s));
@@ -605,7 +536,7 @@ function setupTestWithPreselectedScripts(options: {
     (s) => !preselectedScripts.map((selected) => selected.id).includes(s.executableId),
   );
   const collection = createCollectionWithScripts(...allScripts);
-  const scriptSelection = new DebouncedScriptSelectionBuilder()
+  const scriptSelection = new InMemoryScriptSelectionBuilder()
     .withSelectedScripts(preselectedScripts)
     .withCollection(collection)
     .build();
@@ -623,23 +554,14 @@ function isScriptStubArray(obj: readonly unknown[]): obj is readonly ScriptStub[
   return obj.length > 0 && obj[0] instanceof ScriptStub;
 }
 
-class DebouncedScriptSelectionBuilder {
+class InMemoryScriptSelectionBuilder {
   private collection: CategoryCollection = new CategoryCollectionStub()
     .withSomeActions();
 
   private selectedScripts: readonly SelectedScript[] = [];
 
-  private batchedDebounce: DebounceFunction = new BatchedDebounceStub<DebounceArg>()
-    .withImmediateDebouncing(true)
-    .func;
-
   public withSelectedScripts(selectedScripts: readonly SelectedScript[]) {
     this.selectedScripts = selectedScripts;
-    return this;
-  }
-
-  public withBatchedDebounce(batchedDebounce: DebounceFunction) {
-    this.batchedDebounce = batchedDebounce;
     return this;
   }
 
@@ -648,11 +570,10 @@ class DebouncedScriptSelectionBuilder {
     return this;
   }
 
-  public build(): DebouncedScriptSelection {
-    return new DebouncedScriptSelection(
+  public build(): InMemoryScriptSelection {
+    return new InMemoryScriptSelection(
       this.collection,
       this.selectedScripts,
-      this.batchedDebounce,
     );
   }
 }

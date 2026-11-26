@@ -1,6 +1,6 @@
 import type { CategoryCollection } from '@/domain/Collection/CategoryCollection';
 import { ScriptToCategorySelectionMapper } from './Category/ScriptToCategorySelectionMapper';
-import { DebouncedScriptSelection } from './Script/DebouncedScriptSelection';
+import { InMemoryScriptSelection } from './Script/InMemoryScriptSelection';
 import type { CategorySelection } from './Category/CategorySelection';
 import type { ScriptSelection } from './Script/ScriptSelection';
 import type { UserSelection } from './UserSelection';
@@ -23,12 +23,12 @@ export class UserSelectionFacade implements UserSelection {
 }
 
 export type ScriptsFactory = (
-  ...params: ConstructorParameters<typeof DebouncedScriptSelection>
+  ...params: ConstructorParameters<typeof InMemoryScriptSelection>
 ) => ScriptSelection;
 
 const DefaultScriptsFactory: ScriptsFactory = (
   ...params
-) => new DebouncedScriptSelection(...params);
+) => new InMemoryScriptSelection(...params);
 
 export type CategoriesFactory = (
   ...params: ConstructorParameters<typeof ScriptToCategorySelectionMapper>
