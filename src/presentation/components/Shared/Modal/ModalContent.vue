@@ -11,7 +11,6 @@
         ref="modalElement"
         class="modal-content-content"
         role="dialog"
-        aria-expanded="true"
         aria-modal="true"
         :aria-label="ariaLabel"
         tabindex="-1"

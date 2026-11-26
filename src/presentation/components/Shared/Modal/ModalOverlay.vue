@@ -6,7 +6,6 @@
     <div
       v-if="show"
       class="modal-overlay-background"
-      aria-expanded="true"
       @click.self.stop="onClick"
     />
   </transition>

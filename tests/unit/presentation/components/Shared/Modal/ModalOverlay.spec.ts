@@ -28,13 +28,13 @@ describe('ModalOverlay.vue', () => {
       expect(modalOverlayBackground.exists()).to.equal(false);
     });
 
-    it('sets aria-expanded to `true` prop is true', () => {
+    it('does not set aria-expanded, which is not valid on a backdrop', () => {
       // arrange & act
       const wrapper = mountComponent({ showProperty: true });
 
       // assert
       const modalOverlayBackground = wrapper.find(DOM_MODAL_OVERLAY_BACKGROUND_SELECTOR);
-      expect(modalOverlayBackground.attributes('aria-expanded')).to.equal('true');
+      expect(modalOverlayBackground.attributes('aria-expanded')).to.equal(undefined);
     });
 
     describe('on modification', () => {

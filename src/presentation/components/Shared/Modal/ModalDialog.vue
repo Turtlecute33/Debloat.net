@@ -78,9 +78,11 @@ export default defineComponent({
     margin-right: 52px; // Clears the close button, which floats over the top-right corner.
     @media screen and (max-width: $media-screen-big-width) {
       margin: $spacing-absolute-x-large;
+      margin-right: 52px;
     }
     @media screen and (max-width: $media-screen-medium-width) {
       margin: $spacing-absolute-large;
+      margin-right: 52px;
     }
   }
 

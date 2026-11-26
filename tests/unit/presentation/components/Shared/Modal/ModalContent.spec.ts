@@ -60,13 +60,13 @@ describe('ModalContent.vue', () => {
   });
 
   describe('aria attributes', () => {
-    it('sets aria-expanded to `true` when visible', () => {
+    it('does not set aria-expanded, which ARIA does not allow on a dialog', () => {
       // arrange & act
       const wrapper = mountComponent({ showProperty: true });
 
       // assert
       const modalContent = wrapper.find(DOM_MODAL_CONTENT_SELECTOR);
-      expect(modalContent.attributes('aria-expanded')).to.equal('true');
+      expect(modalContent.attributes('aria-expanded')).to.equal(undefined);
     });
 
     it('always sets aria-modal to true for the modal content', () => {
