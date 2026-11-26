@@ -31,7 +31,9 @@ Only the latest version, the one live on [debloat.net](https://debloat.net), rec
 - **Safe links.** External links cannot access the page that opened them, and no referrer is
   sent.
 - **Minimal third parties.** The only request beyond the site's own files is a cookie-free page
-  count to a self-hosted Umami instance. There are no ads, third-party trackers, or CDN scripts.
+  view to a self-hosted Umami instance. It sends the page address and title, the referring site,
+  the screen size, and the browser language. Like any request, it also shows your IP address and
+  browser to that server. There are no ads, third-party trackers, or CDN scripts.
 
 ## Build and release integrity
 

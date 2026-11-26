@@ -97,7 +97,8 @@ About 1,300 tweaks across three systems, each with documentation and sources.
   updates, are left out of the Standard and Strict presets and grouped under *Privacy over
   security*. Only *All* selects them.
 - **Private.** No account, cookies, or ads. The only request beyond the site itself is a
-  cookie-free page count to a self-hosted Umami instance.
+  cookie-free page view to a self-hosted Umami instance. It sends the page address and title,
+  the referring site, the screen size, and the browser language.
 - **Maintained.** Updated for current releases of Windows 11, macOS, and Linux.
 
 ## FAQ

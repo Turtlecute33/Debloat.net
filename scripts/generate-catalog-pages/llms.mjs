@@ -41,7 +41,8 @@ export function renderLlmsTxt(collections, pages) {
   it as administrator or root. Most tweaks also generate a revert script that undoes them.
 - Data handling: there is no backend and no account. Scripts are built in the browser and the
   selection never leaves the device. No cookies, no advertising or third-party trackers; the only
-  request beyond the site itself is an anonymous page-view count to a self-hosted analytics server.
+  request beyond the site itself is a cookie-free page view to a self-hosted analytics server, which
+  sends the page address and title, the referring site, the screen size and the browser language.
 - Name: the site goes by its address, debloat.net; it is also called privacy.sexy
   Revamped, and was at privacy.turtlecute.org until November 2026. It is not privacy.sexy, the
   upstream site.
