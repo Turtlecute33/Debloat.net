@@ -14,7 +14,7 @@
 import { createServer } from 'node:http';
 import { readFile, writeFile, stat } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import { resolve, join, extname } from 'node:path';
+import { resolve, join, extname, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import puppeteer from 'puppeteer';
 import distDirs from '../dist-dirs.json' with { type: 'json' };
@@ -85,7 +85,8 @@ async function startServer() {
     try {
       const { pathname } = new URL(req.url, ORIGIN);
       let filePath = join(DIST_DIR, decodeURIComponent(pathname));
-      if (!filePath.startsWith(DIST_DIR)) { // path traversal guard
+      // Path traversal guard. The separator keeps a sibling such as `dist-web-old` outside it.
+      if (filePath !== DIST_DIR && !filePath.startsWith(DIST_DIR + sep)) {
         res.statusCode = 403;
         res.end('Forbidden');
         return;
