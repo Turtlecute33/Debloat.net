@@ -45,7 +45,7 @@ const DOM_SELECTOR_OVERLAY = '.tooltip__overlay';
 const DOM_SELECTOR_DISPLAY = '.tooltip__display';
 const DOM_CLASS_VISIBLE = 'tooltip__overlay--visible';
 const DOM_CLASS_SLOT_STATE = 'slot-state';
-const POINTER_HANDOFF_DELAY_IN_MS = 75;
+const POINTER_HANDOFF_DELAY_IN_MS = 300;
 const TRANSITION_UPDATE_THROTTLE_IN_MS = 400;
 
 type TooltipSlot = string | ((props: { readonly hasBeenShown: boolean }) => VNode);
@@ -387,14 +387,148 @@ describe('TooltipWrapper.vue', () => {
 
     wrapper.unmount();
   });
+
+  it('stays visible long enough for a slow pointer to cross to the content', async () => {
+    // arrange
+    const slowPointerCrossingTimeInMs = 200;
+    const wrapper = mountComponent('Trigger');
+    const trigger = wrapper.find(DOM_SELECTOR_TRIGGER);
+    await trigger.trigger('mouseenter');
+
+    // act
+    await trigger.trigger('mouseleave');
+    vi.advanceTimersByTime(slowPointerCrossingTimeInMs);
+    await nextTick();
+
+    // assert
+    expect(isTooltipVisible(wrapper)).to.equal(true);
+
+    wrapper.unmount();
+  });
+
+  describe('keyboard focus', () => {
+    let restoreFocusMatching: (() => void) | undefined;
+
+    function simulateKeyboardFocus(): void {
+      const { matches } = Element.prototype;
+      const spy = vi.spyOn(Element.prototype, 'matches').mockImplementation(
+        function matchesFocusVisible(this: Element, selectors: string) {
+          return selectors === ':focus-visible' || matches.call(this, selectors);
+        },
+      );
+      restoreFocusMatching = () => spy.mockRestore();
+    }
+
+    afterEach(() => {
+      restoreFocusMatching?.();
+      restoreFocusMatching = undefined;
+    });
+
+    it('stays open when the pointer leaves the content while a link inside has focus', async () => {
+      // arrange
+      simulateKeyboardFocus();
+      const wrapper = mountComponent('Trigger');
+      const tooltipDisplay = wrapper.find(DOM_SELECTOR_DISPLAY);
+      await tooltipDisplay.trigger('mouseenter');
+      await wrapper.find('a').trigger('focusin');
+
+      // act
+      await tooltipDisplay.trigger('mouseleave');
+      vi.advanceTimersByTime(POINTER_HANDOFF_DELAY_IN_MS);
+      await nextTick();
+
+      // assert
+      expect(isTooltipVisible(wrapper)).to.equal(true);
+
+      wrapper.unmount();
+    });
+
+    it('closes once focus leaves after the pointer has left', async () => {
+      // arrange
+      simulateKeyboardFocus();
+      const wrapper = mountComponent('Trigger');
+      const tooltipDisplay = wrapper.find(DOM_SELECTOR_DISPLAY);
+      await tooltipDisplay.trigger('mouseenter');
+      await wrapper.find('a').trigger('focusin');
+      await tooltipDisplay.trigger('mouseleave');
+
+      // act
+      await wrapper.find('a').trigger('focusout');
+      vi.advanceTimersByTime(POINTER_HANDOFF_DELAY_IN_MS);
+      await nextTick();
+
+      // assert
+      expect(isTooltipVisible(wrapper)).to.equal(false);
+
+      wrapper.unmount();
+    });
+
+    it('stays open when focus leaves the trigger while the pointer is over it', async () => {
+      // arrange
+      simulateKeyboardFocus();
+      const wrapper = mountComponent('Trigger');
+      const trigger = wrapper.find(DOM_SELECTOR_TRIGGER);
+      await trigger.trigger('mouseenter');
+      await trigger.trigger('focusin');
+
+      // act
+      await trigger.trigger('focusout');
+      vi.advanceTimersByTime(POINTER_HANDOFF_DELAY_IN_MS);
+      await nextTick();
+
+      // assert
+      expect(isTooltipVisible(wrapper)).to.equal(true);
+
+      wrapper.unmount();
+    });
+
+    it('does not count focus from a click, so the tooltip closes when the pointer leaves', async () => {
+      // arrange
+      const wrapper = mountComponent('Trigger');
+      const trigger = wrapper.find(DOM_SELECTOR_TRIGGER);
+      await trigger.trigger('mouseenter');
+      await trigger.trigger('focusin'); // `:focus-visible` does not match a click focus
+
+      // act
+      await trigger.trigger('mouseleave');
+      vi.advanceTimersByTime(POINTER_HANDOFF_DELAY_IN_MS);
+      await nextTick();
+
+      // assert
+      expect(isTooltipVisible(wrapper)).to.equal(false);
+
+      wrapper.unmount();
+    });
+
+    it('moves focus from the content to the trigger when Escape closes it', async () => {
+      // arrange
+      simulateKeyboardFocus();
+      const wrapper = mountComponent('Trigger', undefined, undefined, { attachTo: document.body });
+      const link = wrapper.find('a').element as HTMLElement;
+      link.focus();
+      await wrapper.find('a').trigger('focusin');
+
+      // act
+      pressKey('Escape');
+      await nextTick();
+
+      // assert
+      expect(document.activeElement).to.equal(wrapper.find('button').element);
+      expect(isTooltipVisible(wrapper)).to.equal(false);
+
+      wrapper.unmount();
+    });
+  });
 });
 
 function mountComponent(
   triggerText: string,
   tooltipSlot: TooltipSlot = '<a href="#details">Read details</a>',
   useEventListener: UseEventListener = new UseEventListenerStub().get(),
+  options: { readonly attachTo?: HTMLElement } = {},
 ) {
   return shallowMount(TooltipWrapper, {
+    ...options,
     slots: {
       default: `<button>${triggerText}</button>`,
       tooltip: tooltipSlot,

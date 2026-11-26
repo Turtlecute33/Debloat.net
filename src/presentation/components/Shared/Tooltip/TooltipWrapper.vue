@@ -7,10 +7,10 @@
     <div
       ref="triggeringElement"
       class="tooltip__trigger"
-      @mouseenter="showTooltip"
-      @mouseleave="scheduleTooltipHide"
-      @focusin="showTooltip"
-      @focusout="scheduleTooltipHide"
+      @mouseenter="onPointerEnter"
+      @mouseleave="onTriggerPointerLeave"
+      @focusin="onFocusIn"
+      @focusout="onFocusOut"
     >
       <slot />
     </div>
@@ -23,10 +23,10 @@
         ref="tooltipDisplayElement"
         class="tooltip__display"
         :style="displayStyles"
-        @mouseenter="showTooltip"
-        @mouseleave="hideTooltip"
-        @focusin="showTooltip"
-        @focusout="scheduleTooltipHide"
+        @mouseenter="onPointerEnter"
+        @mouseleave="onContentPointerLeave"
+        @focusin="onFocusIn"
+        @focusout="onFocusOut"
       >
         <div class="tooltip__content">
           <!--
@@ -67,7 +67,15 @@ const GAP_BETWEEN_TOOLTIP_AND_TRIGGER_IN_PX = 2;
 const ARROW_SIZE_IN_PX = 4;
 
 const DEFAULT_PLACEMENT: Placement = 'top';
-const POINTER_HANDOFF_DELAY_IN_MS = 75;
+
+/*
+  How long the tooltip stays open after the pointer leaves the trigger or focus leaves the tooltip.
+  The pointer must be able to cross the gap to the content without it closing (WCAG 2.1, 1.4.13
+  Content on Hover or Focus). 75 ms closed it under a slow or pausing pointer.
+*/
+const POINTER_HANDOFF_DELAY_IN_MS = 300;
+
+const FOCUSABLE_SELECTOR = 'a[href], button, input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
 interface ActiveTooltip {
   readonly identifier: symbol;
@@ -156,10 +164,23 @@ export default defineComponent({
       arrowSizeInPx: ARROW_SIZE_IN_PX,
     }));
 
-    dismissOnEscape(isTooltipVisible, () => hideTooltip());
+    dismissOnEscape(isTooltipVisible, () => {
+      moveFocusOutOfTooltipContent();
+      hideTooltip();
+    });
 
     const tooltipIdentifier = Symbol('tooltip');
     let hideTimer: ReturnType<typeof setTimeout> | undefined;
+
+    /*
+      The tooltip stays open while the pointer is over the trigger or the content, or while keyboard
+      focus is in either. A scheduled hide checks both, so a link focused inside the content stays
+      visible when the pointer leaves, and a hovered trigger keeps it open when focus leaves.
+      Only keyboard focus counts: a click also focuses the trigger, and counting that would keep
+      the tooltip open after the pointer has left.
+    */
+    let isPointerInside = false;
+    let isFocusInside = false;
 
     function clearScheduledHide() {
       if (hideTimer === undefined) {
@@ -202,7 +223,57 @@ export default defineComponent({
 
     function scheduleTooltipHide() {
       clearScheduledHide();
-      hideTimer = setTimeout(hideTooltip, POINTER_HANDOFF_DELAY_IN_MS);
+      hideTimer = setTimeout(() => {
+        hideTimer = undefined;
+        if (!isPointerInside && !isFocusInside) {
+          hideTooltip();
+        }
+      }, POINTER_HANDOFF_DELAY_IN_MS);
+    }
+
+    function onPointerEnter() {
+      isPointerInside = true;
+      showTooltip();
+    }
+
+    function onTriggerPointerLeave() {
+      isPointerInside = false;
+      scheduleTooltipHide();
+    }
+
+    function onContentPointerLeave() {
+      isPointerInside = false;
+      if (!isFocusInside) {
+        hideTooltip();
+      }
+    }
+
+    function onFocusIn(event: FocusEvent) {
+      isFocusInside = isKeyboardFocus(event.target);
+      showTooltip();
+    }
+
+    function onFocusOut() {
+      isFocusInside = false;
+      scheduleTooltipHide();
+    }
+
+    /*
+      Hiding the content while focus is on a link inside it would leave focus on an invisible
+      element. Focus goes back to the trigger first; that focus reopens the tooltip synchronously,
+      so the caller hides it after this.
+    */
+    function moveFocusOutOfTooltipContent() {
+      const focused = document.activeElement;
+      if (!(focused instanceof HTMLElement) || !tooltipDisplayElement.value?.contains(focused)) {
+        return;
+      }
+      const triggerTarget = triggeringElement.value?.querySelector<HTMLElement>(FOCUSABLE_SELECTOR);
+      if (triggerTarget) {
+        triggerTarget.focus();
+        return;
+      }
+      focused.blur();
     }
 
     onUnmounted(() => {
@@ -218,12 +289,25 @@ export default defineComponent({
       placement,
       isTooltipVisible,
       hasBeenShown,
-      showTooltip,
-      scheduleTooltipHide,
-      hideTooltip,
+      onPointerEnter,
+      onTriggerPointerLeave,
+      onContentPointerLeave,
+      onFocusIn,
+      onFocusOut,
     };
   },
 });
+
+function isKeyboardFocus(target: EventTarget | null): boolean {
+  if (!(target instanceof Element)) {
+    return false;
+  }
+  try {
+    return target.matches(':focus-visible');
+  } catch {
+    return false; // A browser without `:focus-visible` keeps the earlier behavior.
+  }
+}
 
 function setupTransitionEndEvents(
   handler: () => void,
