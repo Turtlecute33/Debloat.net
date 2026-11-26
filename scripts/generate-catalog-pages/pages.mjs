@@ -187,11 +187,11 @@ function renderGroup(group) {
 
 function renderSection({ path, scripts }) {
   const heading = path.length === 0 ? '' : `
-    <p class="sub">
+    <h3 class="sub">
       ${path.map((name, index) => (index === path.length - 1
     ? escapeHtml(name)
     : `<span class="sub__path">${escapeHtml(name)} &rsaquo; </span>`)).join('')}
-    </p>`;
+    </h3>`;
   return `
     ${heading}
     <ul class="items">

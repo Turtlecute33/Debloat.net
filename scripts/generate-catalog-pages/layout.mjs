@@ -199,7 +199,7 @@ export function renderPage({
   </div>
 </header>
 <div class="wrap">
-${rail ? `<aside class="rail">${rail}</aside>` : ''}
+${rail ? `<nav class="rail" aria-label="Categories">${rail}</nav>` : ''}
 <main>
 <h1>${escapeHtml(h1)}</h1>
 ${body}
