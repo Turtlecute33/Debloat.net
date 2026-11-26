@@ -70,6 +70,24 @@ describe('useLockBodyBackgroundScroll', () => {
     // assert
     expect(actualDomState).to.deep.equal(initialDomState);
   });
+  it('keeps the page state on unmount after the lock was already released', async () => {
+    // arrange
+    const expectedScrollTop = 1200;
+    const isInitiallyActive = true;
+    const {
+      component, isActive, actualDomState,
+    } = mountWrapperComponent(isInitiallyActive);
+    isActive.value = false;
+    await nextTick();
+    actualDomState.htmlScrollTop = expectedScrollTop; // The visitor scrolls after the close
+
+    // act
+    component.unmount();
+    await nextTick();
+
+    // assert
+    expect(actualDomState.htmlScrollTop).to.equal(expectedScrollTop);
+  });
 });
 
 function mountWrapperComponent(

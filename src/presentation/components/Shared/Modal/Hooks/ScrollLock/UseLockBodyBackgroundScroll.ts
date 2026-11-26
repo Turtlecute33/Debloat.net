@@ -25,6 +25,7 @@ export function useLockBodyBackgroundScroll(
     ScrollLockMutators.forEach((mutator) => {
       mutator.onUnblock(dom);
     });
+    isBlocked = false; // Else an unmount after a close replays the saved state over the page.
   }
 
   watch(isActive, (shouldBlock) => {
