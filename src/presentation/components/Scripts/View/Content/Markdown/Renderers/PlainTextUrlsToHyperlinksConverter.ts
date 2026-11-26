@@ -13,7 +13,12 @@ function autoLinkPlainUrls(content: string): string {
     return content;
   }
   return content.replaceAll(PlainTextUrlInMarkdownRegex, (fullMatch, url) => {
-    return fullMatch.replace(url, formatReadableLink(url));
+    try {
+      // A function, because a string replacement would expand `$&` and similar in the URL
+      return fullMatch.replace(url, () => formatReadableLink(url));
+    } catch {
+      return fullMatch; // `new URL` rejects text such as `http://<server>/`, which stays plain
+    }
   });
 }
 

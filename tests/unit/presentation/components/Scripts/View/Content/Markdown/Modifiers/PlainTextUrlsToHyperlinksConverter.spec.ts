@@ -24,6 +24,10 @@ describe('PlainTextUrlsToHyperlinksConverter', () => {
             '[1]: https://privacy.sexy',
           ].join('\n'),
         },
+        {
+          description: 'text that is not a valid URL',
+          markdownContent: 'Open http://<server>/admin in a browser.',
+        },
       ];
       testScenarios.forEach(({ description, markdownContent }) => {
         it(description, () => {
@@ -121,6 +125,11 @@ describe('PlainTextUrlsToHyperlinksConverter', () => {
           description: 'decodes valid path segments next to a malformed one',
           urlText: 'https://privacy.sexy/privacy%20scripts/50%',
           expectedLabel: 'privacy.sexy - Privacy Scripts',
+        },
+        {
+          description: 'keeps replacement patterns such as `$&` in URLs',
+          urlText: 'https://privacy.sexy/?q=$&',
+          expectedLabel: 'privacy.sexy',
         },
       ];
       testScenarios.forEach(({
