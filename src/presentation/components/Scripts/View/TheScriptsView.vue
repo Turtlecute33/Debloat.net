@@ -1,5 +1,9 @@
 <template>
   <div class="scripts-view">
+    <!-- Mounted at all times, so a screen reader announces each settled search. -->
+    <p class="visually-hidden" role="status">
+      {{ searchStatus }}
+    </p>
     <TheSelectionExplorer
       v-if="!currentFilter"
       v-model:active-category-id="activeCategoryId"
@@ -67,10 +71,18 @@ export default defineComponent({
         return '';
       }
       const threshold = 30;
-      if (query.length <= threshold - 3) {
+      if (query.length <= threshold) {
         return query;
       }
-      return `${query.substring(0, threshold)}...`;
+      return `${query.substring(0, threshold - 3)}...`;
+    });
+    const searchStatus = computed<string>(() => {
+      if (!currentFilter.value) {
+        return '';
+      }
+      return searchHasMatches.value
+        ? `Showing matches for "${trimmedSearchQuery.value}"`
+        : `No matches for "${trimmedSearchQuery.value}"`;
     });
 
     onStateChange((newState) => {
@@ -107,6 +119,7 @@ export default defineComponent({
     return {
       repositoryUrl,
       trimmedSearchQuery,
+      searchStatus,
       currentFilter,
       activeCategoryId,
       searchHasMatches,
@@ -118,6 +131,18 @@ export default defineComponent({
 
 <style scoped lang="scss">
 @use "@/presentation/assets/styles/main" as *;
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
 
 .scripts-view {
   display: flex;

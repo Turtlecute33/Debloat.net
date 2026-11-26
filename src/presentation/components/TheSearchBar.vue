@@ -93,12 +93,16 @@ export default defineComponent({
     /*
       Search is the fastest way through a thousand settings, so it is one key away from anywhere
       on the page: `/` as on most documentation sites, and Ctrl/Cmd+K as in most desktop apps.
-      `/` is left alone while the visitor is typing somewhere else.
+      `/` is left alone while the visitor is typing somewhere else. Both are left alone while a
+      dialog is open: the page behind it is not inert, so focus would leave the dialog it shows.
     */
     function onGlobalKeydown(event: KeyboardEvent) {
       const isCommandK = event.key.toLowerCase() === 'k' && (event.ctrlKey || event.metaKey);
       const isSlash = event.key === '/' && !event.ctrlKey && !event.metaKey && !event.altKey;
       if (!isCommandK && !(isSlash && !isTypingTarget(event.target))) {
+        return;
+      }
+      if (document.querySelector('[aria-modal="true"]')) {
         return;
       }
       event.preventDefault();

@@ -16,6 +16,7 @@
             'has-selection': (selectedCounts.get(item.categoryId) ?? 0) > 0,
           }"
           :aria-current="item.categoryId === activeCategoryId ? 'true' : undefined"
+          :aria-label="`${item.name}, ${selectedCounts.get(item.categoryId) ?? 0} of ${item.scriptIds.length} selected`"
           @click="$emit('categoryActivated', item.categoryId)"
         >
           <span class="rail__item__name">{{ item.name }}</span>

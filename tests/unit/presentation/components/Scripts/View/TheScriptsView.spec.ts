@@ -17,6 +17,7 @@ import type { FilterResult } from '@/application/Context/State/Filter/Result/Fil
 import type { Component } from 'vue';
 
 const DOM_SELECTOR_NO_MATCHES = '.search-no-matches';
+const DOM_SELECTOR_STATUS = '[role="status"]';
 
 describe('TheScriptsView.vue', () => {
   describe('switching between browsing and search', () => {
@@ -295,6 +296,79 @@ describe('TheScriptsView.vue', () => {
 
         // expect
         expect(wrapper.find(DOM_SELECTOR_NO_MATCHES).exists()).to.equal(false);
+      });
+    });
+  });
+
+  describe('search status for screen readers', () => {
+    const testCases: ReadonlyArray<{
+      readonly name: string;
+      readonly filter?: FilterResult;
+      readonly expectedStatus: string;
+    }> = [
+      {
+        name: 'is empty without a filter',
+        filter: undefined,
+        expectedStatus: '',
+      },
+      {
+        name: 'announces no matches',
+        filter: new FilterResultStub().withQuery('telemetry').withEmptyMatches(),
+        expectedStatus: 'No matches for "telemetry"',
+      },
+      {
+        name: 'announces matches',
+        filter: new FilterResultStub().withQuery('telemetry').withSomeMatches(),
+        expectedStatus: 'Showing matches for "telemetry"',
+      },
+    ];
+    testCases.forEach(({ name, filter, expectedStatus }) => {
+      it(name, () => {
+        // arrange
+        const stateStub = new UseCollectionStateStub()
+          .withFilterResult(filter);
+
+        // act
+        const wrapper = mountComponent({
+          useCollectionState: stateStub.get(),
+        });
+
+        // assert
+        expect(wrapper.find(DOM_SELECTOR_STATUS).text()).to.equal(expectedStatus);
+      });
+    });
+  });
+
+  describe('query label', () => {
+    const testCases: ReadonlyArray<{
+      readonly name: string;
+      readonly query: string;
+      readonly expectedLabel: string;
+    }> = [
+      {
+        name: 'shows a 30-character query in full',
+        query: 'a'.repeat(30),
+        expectedLabel: 'a'.repeat(30),
+      },
+      {
+        name: 'cuts a longer query to 30 characters, ellipsis included',
+        query: 'a'.repeat(31),
+        expectedLabel: `${'a'.repeat(27)}...`,
+      },
+    ];
+    testCases.forEach(({ name, query, expectedLabel }) => {
+      it(name, () => {
+        // arrange
+        const stateStub = new UseCollectionStateStub()
+          .withFilterResult(new FilterResultStub().withQuery(query).withEmptyMatches());
+
+        // act
+        const wrapper = mountComponent({
+          useCollectionState: stateStub.get(),
+        });
+
+        // assert
+        expect(wrapper.find(DOM_SELECTOR_STATUS).text()).to.equal(`No matches for "${expectedLabel}"`);
       });
     });
   });
