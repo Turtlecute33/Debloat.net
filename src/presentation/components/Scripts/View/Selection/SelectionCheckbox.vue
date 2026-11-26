@@ -169,5 +169,33 @@ $size: 20px;
   @include hover-or-touch($selector-suffix: '+ .checkbox__box', $selector-prefix: '.checkbox__input') {
     box-shadow: inset 0 0 0 1.5px var(--accent);
   }
+
+  /*
+    Forced colors (such as Windows contrast themes) remove `box-shadow`, which is the only edge of
+    the unchecked circle, so it disappeared. The states are drawn with system colors instead.
+  */
+  @media (forced-colors: active) {
+    &__box {
+      forced-color-adjust: none;
+      border: 1.5px solid CanvasText;
+      background: Canvas;
+      box-shadow: none;
+    }
+
+    &.is-checked &__box,
+    &.is-indeterminate &__box {
+      border-color: Highlight;
+      background: Highlight;
+    }
+
+    &.is-checked &__mark,
+    &.is-indeterminate &__mark {
+      stroke: HighlightText;
+    }
+
+    .checkbox__input:focus-visible + &__box {
+      outline-color: Highlight;
+    }
+  }
 }
 </style>

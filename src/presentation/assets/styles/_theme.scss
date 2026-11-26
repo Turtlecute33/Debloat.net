@@ -50,7 +50,7 @@
   --accent-text: #2552c4;
   --accent-soft: rgba(47, 98, 224, 0.12);
   --on-accent: #ffffff;
-  --focus-ring: rgba(47, 98, 224, 0.5);
+  --focus-ring: var(--accent); // Opaque: the translucent ring measured about 2:1 on light surfaces, below the 3:1 of WCAG 1.4.11.
 
   --warn: #b45309;
   --warn-fill: rgba(245, 158, 11, 0.18);
