@@ -94,7 +94,8 @@ About 1,300 tweaks across three systems, each with documentation and sources.
 - **Explained.** Plain-language notes and source links for every tweak.
 - **Reversible.** Most tweaks have a revert option that restores the default.
 - **Safe presets.** Tweaks that weaken security, such as turning off Defender or automatic
-  updates, are left out of every preset and grouped under *Privacy over security*.
+  updates, are left out of the Standard and Strict presets and grouped under *Privacy over
+  security*. Only *All* selects them.
 - **Private.** No account, cookies, or ads. The only request beyond the site itself is a
   cookie-free page count to a self-hosted Umami instance.
 - **Maintained.** Updated for current releases of Windows 11, macOS, and Linux.

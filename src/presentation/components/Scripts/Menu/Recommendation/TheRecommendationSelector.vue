@@ -73,8 +73,9 @@
         <RecommendationDocumentation
           :privacy-rating="4"
           description="Strongest privacy by disabling any functionality that may risk data exposure."
-          recommendation="Recommended for extreme use cases where no data leak is acceptable like crime labs."
+          recommendation="Use it only on isolated or disposable systems, where privacy matters more than security."
           :considerations="[
+            'Includes tweaks that weaken security. No other preset selects them.',
             'Not recommended for daily use as it breaks important functionality.',
             'Do not run it without having backups and system snapshots, unless you\'re on a disposable system.',
           ]"

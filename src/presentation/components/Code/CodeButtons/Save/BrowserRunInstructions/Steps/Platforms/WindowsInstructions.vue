@@ -110,11 +110,10 @@
           <strong>Defender SmartScreen</strong> may display a cautionary message.
         </p>
         <p>
-          This happens since privacy.sexy scripts are not recognized
-          by Microsoft's certification process.
+          SmartScreen shows this warning for downloaded files that it does not recognize.
         </p>
         <p>
-          If you see the warning, bypass it by following these steps:
+          Continue only if you downloaded this file from debloat.net. Then follow these steps:
         </p>
         <ol>
           <li>Select <strong>More info</strong>.</li>
