@@ -104,6 +104,14 @@ describe('ExpressionRegexBuilder', () => {
       // assert
       'first',
     ));
+    it('captures until first closing brace', () => expectCapture(
+      // arrange
+      'first}}',
+      // act
+      (act) => act.captureUntilWhitespaceOrPipe(),
+      // assert
+      'first',
+    ));
     it('captures all without whitespace or pipe', () => expectCapture(
       // arrange
       'all',

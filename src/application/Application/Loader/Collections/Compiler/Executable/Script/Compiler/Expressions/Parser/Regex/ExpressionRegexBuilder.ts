@@ -28,7 +28,11 @@ export class ExpressionRegexBuilder {
 
   public captureUntilWhitespaceOrPipe() {
     return this
-      .addRawRegex('([^|\\s]+)');
+      /*
+        Also stops at `}`: the capture is a parameter name (letters and digits only), and without
+        this `{{ $value}}}` captured `value}` and then failed to find that parameter.
+      */
+      .addRawRegex('([^|\\s}]+)');
   }
 
   public captureMultilineAnythingExceptSurroundingWhitespaces() {

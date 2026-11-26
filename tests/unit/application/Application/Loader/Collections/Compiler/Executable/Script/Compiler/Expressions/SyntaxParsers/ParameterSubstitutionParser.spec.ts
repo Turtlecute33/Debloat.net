@@ -55,6 +55,13 @@ describe('ParameterSubstitutionParser', () => {
           .withArgument('letterH', 'H'),
         expected: ['H', 'l', 'l', 'l'],
       },
+      {
+        name: 'parameter directly before a literal closing brace',
+        code: '{{{ $parameter}}}',
+        args: (args) => args
+          .withArgument('parameter', 'X'),
+        expected: ['X'],
+      },
     );
   });
   describe('compiles pipes as expected', () => {
